@@ -1,0 +1,45 @@
+services:
+  frontend:
+    container_name: frontend_discord
+    build: ./frontend
+    env_file:
+      - ./frontend/frontend.env
+    environment:
+      - TZ=Asia/Kathmandu
+    ports:
+      - "5173:5173"
+    command: >
+      npm run start:dev
+
+  backend:
+    container_name: backend_discord
+    build: ./backend
+    env_file:
+      - ./backend/backend.env
+    environment:
+      - TZ=Asia/Kathmandu
+      - DB_HOST=database
+    depends_on:
+      - database
+    command: >
+      npm run start:dev
+    ports:
+      - "8000:8000"
+
+  database:
+    image: postgres:16.3-alpine3.19
+    container_name: postgres_discord
+    env_file:
+      - ./backend/backend.env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - TZ=Asia/Kathmandu
+    volumes:
+      - postgres_data_discord:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data_discord:
