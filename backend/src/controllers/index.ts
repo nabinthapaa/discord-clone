@@ -1,3 +1,1 @@
-import * as AuthController from "./auth.controller";
-
-export { AuthController };
+export * as AuthController from "./auth.controller";

@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { NotFoundError } from "../errors";
 import {
   EUserType,
@@ -8,10 +9,6 @@ import {
 } from "../interfaces/user.interface";
 import { UserModel } from "../models";
 import { UUID } from "../types";
-import bcrypt from "bcryptjs";
-import { loggerWithNameSpace } from "../utils";
-
-const logger = loggerWithNameSpace("User Service");
 
 export function getUserByEmail(email: string): Promise<IUser> {
   return UserModel.getUserByEmail(email);

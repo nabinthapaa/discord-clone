@@ -13,6 +13,5 @@ export function requestLogger(
   next: NextFunction,
 ): void {
   logger.info(`${req.method}: ${req.url}`);
-
   next();
 }

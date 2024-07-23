@@ -12,12 +12,12 @@ const logger = loggerWithNameSpace("Auth Controller");
 export async function login(
   req: Request<any, any, IUserWithEmailAndPassword>,
   res: Response,
-) {
+): Promise<Response<any, Record<string, any>>> {
   logger.info(`User with id ${req.user?.id} logging in`);
   const { body } = req;
   const response = await AuthService.login(body);
 
-  res.status(httpStatusCode.ACCEPTED).json({
+  return res.status(httpStatusCode.ACCEPTED).json({
     ...response,
   });
 }
@@ -25,11 +25,11 @@ export async function login(
 export async function register(
   req: Request<any, any, IUserWithoutTypeAndId>,
   res: Response,
-) {
+): Promise<Response<any, Record<string, any>>> {
   logger.info(`Creating new user`);
   const { body } = req;
   const response = await AuthService.register(body);
-  res.status(httpStatusCode.CREATED).json({
+  return res.status(httpStatusCode.CREATED).json({
     ...response,
   });
 }
