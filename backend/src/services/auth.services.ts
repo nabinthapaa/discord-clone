@@ -1,9 +1,15 @@
 import { UserService } from ".";
 import config from "../config";
-import { BaseError, NotFoundError, UnauthentictedError } from "../errors";
+import {
+  BaseError,
+  NotFoundError,
+  UnauthentictedError,
+  UserExistsError,
+} from "../errors";
 import {
   IUserWithEmailAndPassword,
   IUserWithoutPassword,
+  IUserWithoutTypeAndId,
 } from "../interfaces/user.interface";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -48,4 +54,23 @@ export async function login(data: IUserWithEmailAndPassword) {
   };
 }
 
-export function register() {}
+export async function register(
+  user: IUserWithoutTypeAndId,
+): Promise<{ message: string }> {
+  const existingUserWithEmail = await UserService.getUserByEmail(user.email);
+  const existingUserWithUsername = await UserService.getUserByUsername(
+    user.username,
+  );
+
+  if (existingUserWithEmail) {
+    throw new UserExistsError(`${user.email} already in use`);
+  } else if (existingUserWithUsername) {
+    throw new UserExistsError(`${user.username} already taken`);
+  }
+
+  await UserService.createUser(user);
+
+  return {
+    message: "User created Successfully. Please login",
+  };
+}

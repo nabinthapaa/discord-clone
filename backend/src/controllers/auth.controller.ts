@@ -1,6 +1,9 @@
 import { Response } from "express";
 import { Request } from "../interfaces/auth.interface";
-import { IUserWithEmailAndPassword } from "../interfaces/user.interface";
+import {
+  IUserWithEmailAndPassword,
+  IUserWithoutTypeAndId,
+} from "../interfaces/user.interface";
 import { httpStatusCode, loggerWithNameSpace } from "../utils";
 import { AuthService } from "../services";
 
@@ -14,11 +17,19 @@ export async function login(
   const { body } = req;
   const response = await AuthService.login(body);
 
-  res.status(httpStatusCode.CREATED).json({
+  res.status(httpStatusCode.ACCEPTED).json({
     ...response,
   });
 }
 
-export function register(req: Request, res: Response) {
+export async function register(
+  req: Request<any, any, IUserWithoutTypeAndId>,
+  res: Response,
+) {
   logger.info(`Creating new user`);
+  const { body } = req;
+  const response = await AuthService.register(body);
+  res.status(httpStatusCode.CREATED).json({
+    ...response,
+  });
 }

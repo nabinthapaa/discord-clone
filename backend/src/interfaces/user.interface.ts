@@ -1,6 +1,6 @@
 import { UUID } from "../types";
 
-enum EUserType {
+export enum EUserType {
   ADMIN = "ADMIN",
   USER = "USER",
 }
@@ -16,6 +16,7 @@ export interface IUser {
 }
 
 export interface IUserWithoutTypeAndId extends Omit<IUser, "id" | "type"> {}
+export interface IUserWithoutId extends Omit<IUser, "id"> {}
 
 export interface IUserWithEmailAndPassword
   extends Pick<IUser, "email" | "password"> {}
