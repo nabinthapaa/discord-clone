@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
+import path from "node:path";
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, "../backend.env") });
 
 const config = {
   port: process.env.PORT,
