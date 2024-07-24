@@ -31,9 +31,10 @@ export async function login(data: IUserWithEmailAndPassword) {
     id: existingUser.id,
     email: existingUser.email,
     displayName: existingUser.displayName,
-    username: existingUser.username,
+    userName: existingUser.userName,
     image: existingUser.image,
     type: existingUser.type,
+    dateOfBirth: existingUser.dateOfBirth,
   };
 
   if (!config.jwt.secret) {
@@ -59,13 +60,13 @@ export async function register(
 ): Promise<{ message: string }> {
   const existingUserWithEmail = await UserService.getUserByEmail(user.email);
   const existingUserWithUsername = await UserService.getUserByUsername(
-    user.username,
+    user.userName,
   );
 
   if (existingUserWithEmail) {
     throw new UserExistsError(`${user.email} already in use`);
   } else if (existingUserWithUsername) {
-    throw new UserExistsError(`${user.username} already taken`);
+    throw new UserExistsError(`${user.userName} already taken`);
   }
 
   await UserService.createUser(user);

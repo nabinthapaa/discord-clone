@@ -7,12 +7,13 @@ export enum EUserType {
 
 export interface IUser {
   id: UUID;
-  username: string;
+  userName: string;
   displayName: string | null;
   email: string;
   type: EUserType;
   password: string;
   image: string;
+  dateOfBirth: Date;
 }
 
 export interface IUserWithoutTypeAndId extends Omit<IUser, "id" | "type"> {}
