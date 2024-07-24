@@ -5,7 +5,7 @@ export interface IDirectMessage {
   user1Name: string;
   user2Name: string;
   message: string;
-  send_on: Date;
+  sendOn: Date;
   isPinned: boolean;
 }
 
@@ -14,3 +14,6 @@ export interface IChannelMessage
   channelName: string;
   senderName: string;
 }
+
+export interface IChannelMessageDB
+  extends Omit<IChannelMessage, "senderName" | "channelName" | "serverName"> {}
