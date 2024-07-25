@@ -25,6 +25,7 @@ export function validateLoginData(QueryFormat: Joi.ObjectSchema) {
     }
 
     req.body = value;
+    next();
   };
 }
 
@@ -46,5 +47,6 @@ export function validateRegistrationData(QueryFormat: Joi.ObjectSchema) {
     }
 
     req.body = value;
+    next();
   };
 }

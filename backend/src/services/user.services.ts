@@ -10,21 +10,24 @@ import {
 import { UserModel } from "../models";
 import { UUID } from "../types";
 
-export function getUserByEmail(email: string): Promise<IUser> {
+export function getUserByEmail(email: string): Promise<IUser | undefined> {
   return UserModel.getUserByEmail(email);
 }
 
 export function getUserByUsername(
   username: string,
-): Promise<IUserWithoutPassword> {
+): Promise<IUserWithoutPassword | undefined> {
   return UserModel.getUserByUsername(username);
 }
 
-export function getUserById(id: UUID): Promise<IUserWithoutPassword> {
+export function getUserById(
+  id: UUID,
+): Promise<IUserWithoutPassword | undefined> {
   return UserModel.getUserById(id);
 }
 
 export async function createUser(user: IUserWithoutTypeAndId): Promise<void> {
+  console.log("creating user", user);
   const hashedPassword = await bcrypt.hash(user.password, 10);
   const userToCreate: IUserWithoutId = {
     ...user,
@@ -41,7 +44,9 @@ export async function updatePassword(
   newPassword: string,
 ): Promise<void> {
   const existingCredentials = await UserModel.getUserByEmail(user.email);
-
+  if (!existingCredentials) {
+    throw new NotFoundError(`User with email: ${user.email} not found`);
+  }
   const isValidCurrentPassword = await bcrypt.compare(
     currentPassword,
     existingCredentials.password,

@@ -1,8 +1,8 @@
 import { UUID } from "../types";
 
 export enum EUserType {
-  ADMIN = "ADMIN",
-  USER = "USER",
+  ADMIN = "admin",
+  USER = "user",
 }
 
 export interface IUser {
