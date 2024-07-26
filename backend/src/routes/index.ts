@@ -1,22 +1,32 @@
-import express from "express";
+import express, { Response } from "express";
+import config from "../config";
+import { Request } from "../interfaces";
+import { requestWrapper } from "../utils";
+import upload from "../utils/multer";
+import { saveImage } from "../utils/saveImage";
 import authRouter from "./auth.routes";
 import serverRouter from "./server.routes";
-import path from "node:path";
-import { cookieChecker } from "../middlewares/cookie";
-import config from "../config";
 
 const router = express();
 
 // TODO: Remove later
-router.use("/index", cookieChecker, (req, res) => {
-  console.log("Hello World");
-  res.cookie("name", "nishangay", {
-    httpOnly: true,
-    sameSite: "strict",
-    maxAge: config.jwt.accessExpiresIn,
-  });
-  res.sendFile(path.join(__dirname, "../../public/index.html"));
-});
+router.post(
+  "/",
+  upload.single("image"),
+  requestWrapper(async (req: Request, res: Response) => {
+    const reply = await saveImage(req.file?.filename);
+    res
+      .status(200)
+      .cookie("name", "nishangay", {
+        httpOnly: true,
+        sameSite: "strict",
+        maxAge: config.jwt.accessExpiresIn,
+      })
+      .json({
+        ...reply,
+      });
+  }),
+);
 
 router.use("/", authRouter);
 router.use("/servers", serverRouter);

@@ -1,3 +1,5 @@
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import express from "express";
 import path from "node:path";
 import config from "./config";
@@ -7,7 +9,6 @@ import {
   routeNotFound,
 } from "./middlewares";
 import router from "./routes";
-import cookieParser from "cookie-parser";
 
 const app = express();
 

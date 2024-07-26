@@ -1,12 +1,19 @@
 import { ServerModel } from "../models/server.model";
 import { UUID } from "../types";
 import { UserService } from ".";
+import { v2 as cloudinary } from "cloudinary";
+import { saveImage } from "../utils/saveImage";
+import { Multer } from "multer";
 
 // TODO: Setup cloudinary
-export function createServer(name: string, image: File, userId: UUID) {
-  let imageUrl: string | null = null;
+export async function createServer(
+  name: string,
+  image: string | undefined,
+  userId: UUID,
+) {
+  let imageUrl: string | undefined;
   if (image) {
-    // get link from cloudinary
+    imageUrl = (await saveImage(image))?.secure_url;
   }
 
   return ServerModel.createServer({

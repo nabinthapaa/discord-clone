@@ -1,9 +1,11 @@
 import express from "express";
+import { ServerService } from "../services";
+import { ServerController } from "../controllers";
 
 const router = express.Router();
 
 // INFO: create server
-router.post("/");
+router.post("/", ServerController.createServer);
 
 // INFO: get all servers of a user
 router.get("/users/:userId");
