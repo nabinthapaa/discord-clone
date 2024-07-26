@@ -1,5 +1,10 @@
 import { NotFoundError } from "../errors";
-import { IServer } from "../interfaces/sever.interface";
+import {
+  IServer,
+  IServerMember,
+  IServerRetrieved,
+  IUserSever,
+} from "../interfaces/sever.interface";
 import { UUID } from "../types";
 import { BaseModel } from "./BaseModel";
 
@@ -12,31 +17,25 @@ export class ServerModel extends BaseModel {
 
   static getServerById(id: UUID) {
     return ServerModel.queryBuilder()
-      .from("servers as s")
+      .table("servers as s")
       .where({ id })
-      .select(
-        "userName as owner",
-        "displayName as ownerName",
-        "s.id as serverId",
-        "serverName",
-        "serverPicture",
-      )
+      .select<
+        IServerRetrieved | undefined
+      >("userName as owner", "displayName as ownerName", "s.id as serverId", "serverName", "serverPicture")
       .join("users as u", "u.id", "s.userId")
       .first();
   }
 
   static getAllUserServer(userId: UUID) {
     return ServerModel.queryBuilder()
-      .from("servers as s")
+      .from("server_members as sm")
       .where({ userId })
-      .select(
-        "userName as owner",
-        "displayName as ownerName",
-        "s.id as serverId",
-        "serverName",
-        "serverPicture",
-      )
-      .join("users as u", "u.id", "s.userId");
+      .select<
+        IUserSever[]
+      >("u.displayName as ownerName", "u2.displayName as memberName", "s.id as serverId", "serverName", "serverPicture")
+      .join("server as s", "s.id", "sm.serverId")
+      .join("users as u", "u.id", "s.userId")
+      .join("users as u2", "u2.id", "sm.userId");
   }
 
   static async addUserToServer(id: UUID, userId: UUID) {
@@ -62,11 +61,8 @@ export class ServerModel extends BaseModel {
       .where({ serverId })
       .join("users as u", "u.id", "sm.userId")
       .join("servers as s", "s.id", "sm.serverId")
-      .select(
-        "displayName as memberName",
-        "serverName",
-        "u.id as memberId",
-        "sm.createdAt as joinedOn",
-      );
+      .select<
+        IServerMember[]
+      >("displayName as memberName", "serverName", "u.id as memberId", "sm.createdAt as joinedOn");
   }
 }

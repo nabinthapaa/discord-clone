@@ -1,5 +1,6 @@
 import express from "express";
 import authRouter from "./auth.routes";
+import serverRouter from "./server.routes";
 import path from "node:path";
 import { cookieChecker } from "../middlewares/cookie";
 import config from "../config";
@@ -18,5 +19,6 @@ router.use("/index", cookieChecker, (req, res) => {
 });
 
 router.use("/", authRouter);
+router.use("/servers", serverRouter);
 
 export default router;
