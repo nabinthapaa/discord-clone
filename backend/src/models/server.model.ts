@@ -1,17 +1,26 @@
+import { EServerRole } from "../enums";
 import { NotFoundError } from "../errors";
 import {
   IServer,
   IServerMember,
   IServerRetrieved,
   IUserSever,
-} from "../interfaces/sever.interface";
+} from "../interfaces";
 import { UUID } from "../types";
 import { BaseModel } from "./BaseModel";
 
 export class ServerModel extends BaseModel {
   static async createServer(server: IServer) {
     return await ServerModel.queryBuilder().transaction(async (trx) => {
-      trx("servers").insert(server);
+      const [newServer] = await trx("servers")
+        .insert(server)
+        .returning(["id", "userId as ownerId"]);
+
+      await trx("server_members").insert({
+        serverId: newServer.id,
+        userId: newServer.ownerId,
+        serverRole: EServerRole.OWNER,
+      });
     });
   }
 

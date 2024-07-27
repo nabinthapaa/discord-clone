@@ -1,12 +1,12 @@
 import bcrypt from "bcryptjs";
+import { EUserType } from "../enums";
 import { NotFoundError } from "../errors";
 import {
-  EUserType,
   IUser,
   IUserWithoutId,
   IUserWithoutPassword,
   IUserWithoutTypeAndId,
-} from "../interfaces/user.interface";
+} from "../interfaces";
 import { UserModel } from "../models";
 import { UUID } from "../types";
 

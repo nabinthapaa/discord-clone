@@ -17,7 +17,6 @@ export async function saveImage(
   image: string | undefined,
   folder?: string,
 ): Promise<UploadApiResponse | undefined> {
-  console.log("File name: ", image);
   if (!image) {
     return;
   }

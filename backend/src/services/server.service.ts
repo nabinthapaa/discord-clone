@@ -1,11 +1,8 @@
+import { UserService } from ".";
 import { ServerModel } from "../models/server.model";
 import { UUID } from "../types";
-import { UserService } from ".";
-import { v2 as cloudinary } from "cloudinary";
 import { saveImage } from "../utils/saveImage";
-import { Multer } from "multer";
 
-// TODO: Setup cloudinary
 export async function createServer(
   name: string,
   image: string | undefined,

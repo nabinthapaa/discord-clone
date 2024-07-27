@@ -1,11 +1,11 @@
+import { NextFunction, Response } from "express";
 import Joi from "joi";
+import { BadRequestError } from "../../errors";
 import {
   IUserWithEmailAndPassword,
   IUserWithoutTypeAndId,
   Request,
-} from "../interfaces";
-import { NextFunction, Response } from "express";
-import { BadRequestError } from "../errors/BadRequestError";
+} from "../../interfaces";
 
 /**
  * Middleware function to validate request body  using Joi schema.

@@ -1,3 +1,5 @@
+import bcrypt from "bcryptjs";
+import jwt, { sign, verify } from "jsonwebtoken";
 import { UserService } from ".";
 import config from "../config";
 import {
@@ -11,8 +13,6 @@ import {
   IUserWithoutPassword,
   IUserWithoutTypeAndId,
 } from "../interfaces/user.interface";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 
 export async function login(data: IUserWithEmailAndPassword) {
   const existingUser = await UserService.getUserByEmail(data.email);
@@ -26,6 +26,8 @@ export async function login(data: IUserWithEmailAndPassword) {
   if (!isValidPassword) {
     throw new UnauthentictedError(`Invalid password`);
   }
+
+  console.log("Login existing user: ", existingUser);
 
   const payload: IUserWithoutPassword = {
     id: existingUser.id,
@@ -74,4 +76,26 @@ export async function register(
   return {
     message: "User created Successfully. Please login",
   };
+}
+
+export async function refresh(refreshToken: string) {
+  let accessToken: string = "";
+  /**
+   * INFO: Docs say it verifies asynchronously but type definition says otherwise
+   * followed docs and added await works fine
+   */
+  await verify(refreshToken, config.jwt.secret!, async (error, data) => {
+    if (error) {
+      throw new BaseError(error.message);
+    }
+    if (typeof data !== "string" && data) {
+      const user = await UserService.getUserByEmail(data.email);
+      if (!user) throw new NotFoundError("User not found");
+      accessToken = sign(user, config.jwt.secret!, {
+        expiresIn: config.jwt.accessExpiresIn,
+      });
+    }
+  });
+
+  return accessToken;
 }

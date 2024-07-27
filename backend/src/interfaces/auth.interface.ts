@@ -9,6 +9,7 @@ export interface Request<
   ReqQuery = qs.ParsedQs,
   Locals extends Record<string, any> = Record<string, any>,
 > extends ExpressRequest<P, ResBody, ReqBody, ReqQuery, Locals> {
+  cookies: ICookies;
   user?: Omit<IUser, "password">;
 }
 
@@ -24,3 +25,5 @@ export interface IncomingImage {
   size: number;
   type: string;
 }
+
+export interface ICookies extends Omit<AuthResponse, "payload"> {}

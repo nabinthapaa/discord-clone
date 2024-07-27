@@ -20,7 +20,6 @@ router.post(
       .cookie("name", "nishangay", {
         httpOnly: true,
         sameSite: "strict",
-        maxAge: config.jwt.accessExpiresIn,
       })
       .json({
         ...reply,

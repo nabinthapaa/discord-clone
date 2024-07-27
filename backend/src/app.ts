@@ -12,13 +12,13 @@ import router from "./routes";
 
 const app = express();
 
-app.use(cookieParser());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "../public")));
+app.use(cookieParser());
 app.use(requestLogger);
 app.use(router);
-app.use(genericErrorHandler);
 app.use(routeNotFound);
+app.use(genericErrorHandler);
 
 app.listen(config.port, () => {
   console.log("listening on port 8000");

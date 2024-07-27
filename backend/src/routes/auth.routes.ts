@@ -1,9 +1,6 @@
 import express from "express";
 import { AuthController } from "../controllers";
-import {
-  validateLoginData,
-  validateRegistrationData,
-} from "../middlewares/validateAuthData";
+import { validateLoginData, validateRegistrationData } from "../middlewares";
 import { loginSchema, registerSchema } from "../Schemas/auth.schema";
 import { requestWrapper } from "../utils";
 

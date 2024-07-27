@@ -7,8 +7,8 @@ const config = {
   port: process.env.PORT,
   jwt: {
     secret: process.env.JWT_SECRET,
-    accessExpiresIn: +process.env.JWT_ACCESS_EXPIRES_IN! || 30000,
-    refreshExpiresIn: +process.env.JWT_REFRESH_EXPIRES_IN! || 300000,
+    accessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN,
+    refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
   },
   database: {
     client: process.env.DB_CLIENT,

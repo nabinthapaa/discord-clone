@@ -8,8 +8,9 @@ import {
   ISeverParamsWithUserOnly,
 } from "../interfaces/sever.interface";
 import { BadRequestError } from "../errors/BadRequestError";
+import { httpStatusCode } from "../utils";
 
-export function createServer(
+export async function createServer(
   req: Request<any, any, INewServer>,
   res: Response,
 ) {
@@ -18,7 +19,11 @@ export function createServer(
   const {
     user: { id },
   } = req;
-  return ServerService.createServer(body.serverName, file?.filename, id);
+
+  await ServerService.createServer(body.serverName, file?.filename, id);
+  return res.status(httpStatusCode.CREATED).json({
+    message: "Server created successfully",
+  });
 }
 
 export function getAllServerOfUser(

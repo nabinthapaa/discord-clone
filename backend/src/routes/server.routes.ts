@@ -1,11 +1,23 @@
 import express from "express";
-import { ServerService } from "../services";
 import { ServerController } from "../controllers";
+import { validateServerData } from "../middlewares";
+import { serverCreationSchema } from "../Schemas/server.schema";
+import { requestWrapper } from "../utils";
+import upload from "../utils/multer";
+import { cookieChecker } from "../middlewares/cookie";
+import { authenticate } from "../middlewares/authenticate";
 
 const router = express.Router();
 
 // INFO: create server
-router.post("/", ServerController.createServer);
+router.post(
+  "/",
+  cookieChecker,
+  authenticate,
+  upload.single("serverImage"),
+  validateServerData(serverCreationSchema),
+  requestWrapper(ServerController.createServer),
+);
 
 // INFO: get all servers of a user
 router.get("/users/:userId");

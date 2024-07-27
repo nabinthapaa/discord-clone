@@ -14,7 +14,7 @@ export class UserModel extends BaseModel {
   static getUserById(id: UUID): Promise<IUserWithoutPassword | undefined> {
     return UserModel.queryBuilder()
       .select<IUserWithoutPassword>(
-        "username",
+        "userName",
         "displayName",
         "type",
         "email",
