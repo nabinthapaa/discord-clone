@@ -1,8 +1,4 @@
-import {
-  v2 as cloudinary,
-  UploadApiResponse,
-  UploadApiOptions,
-} from "cloudinary";
+import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 import { unlink } from "fs/promises";
 import { join } from "path";
 import config from "../config";

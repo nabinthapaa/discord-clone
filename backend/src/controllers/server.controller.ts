@@ -9,6 +9,7 @@ import {
 } from "../interfaces";
 import { ServerService } from "../services";
 import { httpStatusCode } from "../utils";
+import { http } from "winston";
 
 export async function createServer(
   req: Request<any, any, INewServer>,
@@ -39,22 +40,30 @@ export async function getAllServerOfUser(
   });
 }
 
-export function getAllUsers(
+export async function getAllUsers(
   req: Request<ISeverParamsWithOutUser>,
   res: Response,
 ) {
   const { id } = req.params;
 
-  return ServerService.getAllSeverMembers(id);
+  const users = await ServerService.getAllSeverMembers(id);
+
+  return res.status(httpStatusCode.OK).json({
+    data: users,
+  });
 }
 
-export function getServerById(
+export async function getServerById(
   req: Request<ISeverParamsWithOutUser>,
   res: Response,
 ) {
   const { id } = req.params;
 
-  return ServerService.getServerById(id);
+  const server = await ServerService.getServerById(id);
+
+  return res.status(httpStatusCode.OK).json({
+    data: server,
+  });
 }
 
 export async function addUserToSever(
@@ -70,11 +79,25 @@ export async function addUserToSever(
     .json({ message: "User added successfully" });
 }
 
-export function removeUserFromServer(
+export async function removeUserFromServer(
   req: Request<ISeverParams>,
   res: Response,
 ) {
   const { id, userId } = req.params;
 
-  return ServerService.removeUserFromServer(id, userId);
+  await ServerService.removeUserFromServer(id, userId);
+
+  return res
+    .status(httpStatusCode.OK)
+    .json({ message: "User removed successfully" });
+}
+
+export async function deleteServer(req: Request<ISeverParams>, res: Response) {
+  const { id } = req.params;
+  if (!req.user) throw new BadRequestError("User can not be processed");
+  const { id: userId } = req.user;
+
+  await ServerService.deleteServer(id, userId);
+
+  res.status(httpStatusCode.OK).json({ message: "server delete successfully" });
 }

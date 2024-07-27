@@ -1,4 +1,4 @@
-import { NextFunction } from "express";
+import { NextFunction, Response } from "express";
 import { ForbiddenError, UnauthentictedError } from "../errors";
 import { Request } from "../interfaces";
 import { EUserType } from "../enums";
@@ -17,16 +17,10 @@ import { EUserType } from "../enums";
  * @param permission {string | undefined} - permissions to check against. "id" is for routes other than `/admin/**`
  */
 
-export function authorize() {
-  return async (req: Request, _: Response, next: NextFunction) => {
-    if (!req.user) {
-      next(new UnauthentictedError(`Please login first`));
-    }
-
-    if (req.user && req.user.type === EUserType.ADMIN) {
-      next();
-    } else {
-      next(new ForbiddenError(`Unaccessible route`));
-    }
-  };
+export function authorize(req: Request, _: Response, next: NextFunction) {
+  if (req.user && req.user.type === EUserType.ADMIN) {
+    next();
+  } else {
+    next(new ForbiddenError(`Unaccessible route`));
+  }
 }

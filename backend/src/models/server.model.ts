@@ -24,13 +24,28 @@ export class ServerModel extends BaseModel {
     });
   }
 
+  static async deleteServer(id: UUID, userId: UUID) {
+    return await ServerModel.queryBuilder().transaction(async (trx) => {
+      const query = trx("servers").where({ id }).andWhere({ userId }).del();
+      await query;
+    });
+  }
+
+  static getOwner(id: UUID) {
+    return ServerModel.queryBuilder()
+      .table("servers")
+      .where({ id })
+      .select(["id", "userId"])
+      .first();
+  }
+
   static getServerById(id: UUID) {
     return ServerModel.queryBuilder()
       .table("servers as s")
-      .where({ id })
+      .where("s.id", "=", id)
       .select<
         IServerRetrieved | undefined
-      >("userName as owner", "displayName as ownerName", "s.id as serverId", "serverName", "serverPicture")
+      >("userName as owner", "displayName as ownerDisplayName", "s.id as serverId", "serverName", "serverPicture")
       .join("users as u", "u.id", "s.userId")
       .first();
   }
@@ -60,9 +75,9 @@ export class ServerModel extends BaseModel {
     });
   }
 
-  static async removeUserFromServer(id: UUID, userId: UUID) {
-    return await ServerModel.queryBuilder().transaction(async (trx) => {
-      await trx("serverMembers").where({ id, userId }).delete();
+  static removeUserFromServer(id: UUID, userId: UUID) {
+    return ServerModel.queryBuilder().transaction(async (trx) => {
+      await trx("serverMembers").where({ serverId: id, userId }).delete();
     });
   }
 
@@ -74,6 +89,6 @@ export class ServerModel extends BaseModel {
       .join("servers as s", "s.id", "sm.serverId")
       .select<
         IServerMember[]
-      >("displayName as memberName", "serverName", "u.id as memberId", "sm.createdAt as joinedOn");
+      >("userName as memberName", "serverName", "u.id as memberId", "sm.createdAt as joinedOn");
   }
 }

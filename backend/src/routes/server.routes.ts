@@ -11,7 +11,7 @@ import { requestWrapper, upload } from "../utils";
 
 const router = express.Router();
 
-// INFO: create server
+// INFO: create server (Completed)
 router.post(
   "/",
   cookieChecker,
@@ -21,7 +21,7 @@ router.post(
   requestWrapper(ServerController.createServer),
 );
 
-// INFO: get all servers of a user
+// INFO: get all servers of a user (completed)
 router.get(
   "/users/:userId",
   cookieChecker,
@@ -32,7 +32,7 @@ router.get(
   requestWrapper(ServerController.getAllServerOfUser),
 );
 
-// INFO: get all users from server
+// INFO: get all users from server (completed)
 router.get(
   "/:id/users",
   cookieChecker,
@@ -43,7 +43,7 @@ router.get(
   requestWrapper(ServerController.getAllUsers),
 );
 
-// INFO: get server by id
+// INFO: get server by id (completed)
 router.get(
   "/:id",
   cookieChecker,
@@ -55,7 +55,17 @@ router.get(
   requestWrapper(ServerController.getServerById),
 );
 
-// INFO: add user to server
+router.delete(
+  "/:id",
+  cookieChecker,
+  authenticate,
+  Validator.validServerQueryParams(
+    ServerSchema.serverOperationWithoutUserSchema,
+  ),
+  requestWrapper(ServerController.deleteServer),
+);
+
+// INFO: add user to server (completed)
 router.post(
   "/:id/users/:userId",
   cookieChecker,
@@ -69,7 +79,9 @@ router.delete(
   "/:id/users/:userId",
   cookieChecker,
   authenticate,
-  Validator.validServerQueryParams(ServerSchema.serverOperationWithUserSchema),
+  Validator.validServerQueryParams(
+    ServerSchema.serverOperationWithoutUserSchema,
+  ),
   requestWrapper(ServerController.removeUserFromServer),
 );
 
