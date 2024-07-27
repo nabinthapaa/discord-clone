@@ -16,6 +16,7 @@ export function routeNotFound(
   req: Request,
   res: Response,
 ): Response<Record<string, string>> {
+  logger.warn(`${req.url} Not found`);
   return res.status(httpStatusCode.NOT_FOUND).json({
     message: "Not Found",
   });

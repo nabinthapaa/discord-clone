@@ -1,11 +1,17 @@
 import { Response } from "express";
-import { Request } from "../interfaces/auth.interface";
+import config from "../config";
 import {
   IUserWithEmailAndPassword,
   IUserWithoutTypeAndId,
-} from "../interfaces/user.interface";
-import { httpStatusCode, loggerWithNameSpace } from "../utils";
+  Request,
+} from "../interfaces";
 import { AuthService } from "../services";
+import {
+  getCookieOptions,
+  getMilliseconds,
+  httpStatusCode,
+  loggerWithNameSpace,
+} from "../utils";
 
 const logger = loggerWithNameSpace("Auth Controller");
 
@@ -17,9 +23,30 @@ export async function login(
   const { body } = req;
   const response = await AuthService.login(body);
 
-  return res.status(httpStatusCode.ACCEPTED).json({
-    ...response,
-  });
+  const refreshTokenExpiry = getMilliseconds(
+    config.jwt.refreshExpiresIn || "7d",
+  );
+  const accessTokenExpiry = getMilliseconds(config.jwt.accessExpiresIn || "8h");
+
+  return res
+    .status(httpStatusCode.ACCEPTED)
+    .cookie(
+      "refreshToken",
+      response.refreshToken,
+      getCookieOptions({
+        maxAge: refreshTokenExpiry,
+      }),
+    )
+    .cookie(
+      "accessToken",
+      response.accessToken,
+      getCookieOptions({
+        maxAge: accessTokenExpiry,
+      }),
+    )
+    .json({
+      ...response,
+    });
 }
 
 export async function register(

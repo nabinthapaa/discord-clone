@@ -6,7 +6,7 @@ import camelize from "camelize";
 const knexConfig: Knex.Config = {
   ...baseKnexConfig,
   wrapIdentifier(value, origImpl) {
-    if ((value = "*")) {
+    if (value === "*") {
       return origImpl(value);
     }
 

@@ -1,4 +1,4 @@
-import { Request as ExpressRequest, Locals } from "express";
+import { Request as ExpressRequest } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import { IUser } from "./user.interface";
 
@@ -9,6 +9,7 @@ export interface Request<
   ReqQuery = qs.ParsedQs,
   Locals extends Record<string, any> = Record<string, any>,
 > extends ExpressRequest<P, ResBody, ReqBody, ReqQuery, Locals> {
+  cookies: ICookies;
   user?: Omit<IUser, "password">;
 }
 
@@ -17,3 +18,12 @@ export interface AuthResponse {
   refreshToken: string;
   payload: Omit<IUser, "password">;
 }
+
+export interface IncomingImage {
+  originalFilename: string;
+  path: string;
+  size: number;
+  type: string;
+}
+
+export interface ICookies extends Omit<AuthResponse, "payload"> {}

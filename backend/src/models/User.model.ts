@@ -3,42 +3,47 @@ import { UUID } from "../types";
 import { BaseModel } from "./BaseModel";
 
 export class UserModel extends BaseModel {
-  static getUserByEmail(email: string): Promise<IUser> {
+  static async getUserByEmail(email: string): Promise<IUser | undefined> {
     return UserModel.queryBuilder()
       .select<IUser>("*")
-      .from("users")
-      .where({ email });
+      .table("users")
+      .where("email", email)
+      .first();
   }
 
-  static getUserById(id: UUID): Promise<IUserWithoutPassword> {
+  static getUserById(id: UUID): Promise<IUserWithoutPassword | undefined> {
     return UserModel.queryBuilder()
       .select<IUserWithoutPassword>(
-        "username",
-        "display_name",
+        "userName",
+        "displayName",
         "type",
         "email",
         "type",
       )
       .from("users")
-      .where({ id });
+      .where({ id })
+      .first();
   }
 
-  static getUserByUsername(username: string): Promise<IUserWithoutPassword> {
+  static getUserByUsername(
+    username: string,
+  ): Promise<IUserWithoutPassword | undefined> {
     return UserModel.queryBuilder()
+      .from("users")
+      .where({ user_name: username })
       .select<IUserWithoutPassword>(
-        "username",
-        "display_name",
+        "userName",
+        "displayName",
         "type",
         "email",
         "type",
       )
-      .from("users")
-      .where({ user_name: username });
+      .first();
   }
 
   static async createUser(user: IUserWithoutId): Promise<void> {
     await UserModel.queryBuilder().transaction(async (trx) => {
-      await trx("users").insert({ ...user });
+      await trx("users").insert(user);
     });
   }
 
