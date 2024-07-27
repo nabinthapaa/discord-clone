@@ -2,8 +2,6 @@ export function getMilliseconds(time: string): number {
   const value = parseInt(time.slice(0, -1), 10);
   const unit = time.slice(-1);
 
-  console.log({ value, unit });
-
   switch (unit) {
     case "s":
       return value * 1000;

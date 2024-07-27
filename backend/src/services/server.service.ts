@@ -1,8 +1,9 @@
 import { UserService } from ".";
-import { ServerModel } from "../models/server.model";
+import { ServerModel } from "../models";
 import { UUID } from "../types";
 import { saveImage } from "../utils/saveImage";
 
+// TODO: Get lower res picture for server profiles
 export async function createServer(
   name: string,
   image: string | undefined,

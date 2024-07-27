@@ -12,7 +12,7 @@ import {
   IUserWithEmailAndPassword,
   IUserWithoutPassword,
   IUserWithoutTypeAndId,
-} from "../interfaces/user.interface";
+} from "../interfaces";
 
 export async function login(data: IUserWithEmailAndPassword) {
   const existingUser = await UserService.getUserByEmail(data.email);
@@ -26,8 +26,6 @@ export async function login(data: IUserWithEmailAndPassword) {
   if (!isValidPassword) {
     throw new UnauthentictedError(`Invalid password`);
   }
-
-  console.log("Login existing user: ", existingUser);
 
   const payload: IUserWithoutPassword = {
     id: existingUser.id,

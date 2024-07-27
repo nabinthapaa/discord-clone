@@ -9,10 +9,12 @@ const TABLE_NAME = "server_members";
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.alterTable(TABLE_NAME, (table) => {
-    table.enu("server_role", ["owner", "mod", "guest"], {
-      useNative: true,
-      enumName: "type_server_roles",
-    });
+    table
+      .enu("server_role", ["owner", "mod", "guest"], {
+        useNative: true,
+        enumName: "type_server_roles",
+      })
+      .defaultTo("guest");
   });
 }
 

@@ -1,13 +1,13 @@
 import { Response } from "express";
-import { Request } from "../interfaces";
-import { ServerService, UserService } from "../services";
+import { BadRequestError } from "../errors";
 import {
   INewServer,
   ISeverParams,
   ISeverParamsWithOutUser,
   ISeverParamsWithUserOnly,
-} from "../interfaces/sever.interface";
-import { BadRequestError } from "../errors/BadRequestError";
+  Request,
+} from "../interfaces";
+import { ServerService } from "../services";
 import { httpStatusCode } from "../utils";
 
 export async function createServer(
@@ -26,13 +26,17 @@ export async function createServer(
   });
 }
 
-export function getAllServerOfUser(
+export async function getAllServerOfUser(
   req: Request<ISeverParamsWithUserOnly>,
   res: Response,
 ) {
   const { userId } = req.params;
 
-  return ServerService.getAllUserServer(userId);
+  const userServers = await ServerService.getAllUserServer(userId);
+
+  return res.status(httpStatusCode.OK).json({
+    data: userServers,
+  });
 }
 
 export function getAllUsers(
@@ -53,10 +57,17 @@ export function getServerById(
   return ServerService.getServerById(id);
 }
 
-export function addUserToSever(req: Request<ISeverParams>, res: Response) {
+export async function addUserToSever(
+  req: Request<ISeverParams>,
+  res: Response,
+) {
   const { id, userId } = req.params;
 
-  return ServerService.addUserToServer(id, userId);
+  await ServerService.addUserToServer(id, userId);
+
+  return res
+    .status(httpStatusCode.CREATED)
+    .json({ message: "User added successfully" });
 }
 
 export function removeUserFromServer(

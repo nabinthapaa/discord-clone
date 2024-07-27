@@ -38,11 +38,11 @@ export class ServerModel extends BaseModel {
   static getAllUserServer(userId: UUID) {
     return ServerModel.queryBuilder()
       .from("server_members as sm")
-      .where({ userId })
+      .where("sm.userId", "=", userId)
       .select<
         IUserSever[]
-      >("u.displayName as ownerName", "u2.displayName as memberName", "s.id as serverId", "serverName", "serverPicture")
-      .join("server as s", "s.id", "sm.serverId")
+      >("u.userName as ownerName", "u2.userName as memberName", "s.id as serverId", "serverName", "serverPicture")
+      .join("servers as s", "s.id", "sm.serverId")
       .join("users as u", "u.id", "s.userId")
       .join("users as u2", "u2.id", "sm.userId");
   }
@@ -54,7 +54,9 @@ export class ServerModel extends BaseModel {
       const user = await trx("users").where({ id: userId }).first();
       if (!user) throw new NotFoundError(`User not found`);
 
-      await trx("serverMembers").insert({ id, userId });
+      await trx("serverMembers")
+        .insert({ serverId: id, userId })
+        .returning("id");
     });
   }
 

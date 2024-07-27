@@ -27,7 +27,6 @@ export function getUserById(
 }
 
 export async function createUser(user: IUserWithoutTypeAndId): Promise<void> {
-  console.log("creating user", user);
   const hashedPassword = await bcrypt.hash(user.password, 10);
   const userToCreate: IUserWithoutId = {
     ...user,

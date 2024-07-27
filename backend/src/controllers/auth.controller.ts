@@ -1,17 +1,17 @@
 import { Response } from "express";
-import { Request } from "../interfaces/auth.interface";
+import config from "../config";
 import {
   IUserWithEmailAndPassword,
   IUserWithoutTypeAndId,
-} from "../interfaces/user.interface";
+  Request,
+} from "../interfaces";
+import { AuthService } from "../services";
 import {
   getCookieOptions,
+  getMilliseconds,
   httpStatusCode,
   loggerWithNameSpace,
 } from "../utils";
-import { AuthService } from "../services";
-import config from "../config";
-import { getMilliseconds } from "../utils/getMiliSeconds";
 
 const logger = loggerWithNameSpace("Auth Controller");
 

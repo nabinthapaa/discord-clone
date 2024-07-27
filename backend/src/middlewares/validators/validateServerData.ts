@@ -15,3 +15,15 @@ export function validateServerData(QueryFormat: Joi.ObjectSchema) {
     next();
   };
 }
+
+export function validServerQueryParams(QueryFormat: Joi.ObjectSchema) {
+  return (req: Request, _: Response, next: NextFunction) => {
+    const { error, value } = QueryFormat.validate(req.params);
+    if (error) {
+      return next(new BadRequestError(error.message));
+    }
+
+    req.params = value;
+    next();
+  };
+}
