@@ -2,7 +2,7 @@ import { UserService } from ".";
 import { BadRequestError, NotFoundError } from "../errors";
 import { ServerModel } from "../models";
 import { UUID } from "../types";
-import { saveImage } from "../utils/saveImage";
+import { getImage, saveImage } from "../utils";
 
 // TODO: Get lower res picture for server profiles
 export async function createServer(
@@ -11,8 +11,11 @@ export async function createServer(
   userId: UUID,
 ) {
   let imageUrl: string | undefined;
+  console.log({ name, image, userId });
   if (image) {
-    imageUrl = (await saveImage(image))?.secure_url;
+    const response = await saveImage(image);
+    console.log("Cloudinary response: ", response);
+    imageUrl = response?.public_id;
   }
 
   return ServerModel.createServer({
@@ -22,8 +25,14 @@ export async function createServer(
   });
 }
 
-export function getServerById(id: UUID) {
-  return ServerModel.getServerById(id);
+export async function getServerById(id: UUID) {
+  const data = await ServerModel.getServerById(id);
+  if (!data) throw new NotFoundError(`Server not found`);
+  const serverImage = data.serverPicture
+    ? await getServerImage(data.serverPicture)
+    : null;
+
+  return { ...data, serverPicture: serverImage };
 }
 
 export function getAllUserServer(userId: UUID) {
@@ -59,4 +68,8 @@ export async function deleteServer(serverId: UUID, userId: UUID) {
     throw new BadRequestError(`User mismatched`);
   }
   throw new NotFoundError(`Server not found`);
+}
+
+export function getServerImage(publicId: string) {
+  return getImage(publicId);
 }

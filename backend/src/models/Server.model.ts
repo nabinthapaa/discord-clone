@@ -39,8 +39,8 @@ export class ServerModel extends BaseModel {
       .first();
   }
 
-  static getServerById(id: UUID) {
-    return ServerModel.queryBuilder()
+  static async getServerById(id: UUID): Promise<IServerRetrieved | undefined> {
+    return await ServerModel.queryBuilder()
       .table("servers as s")
       .where("s.id", "=", id)
       .select<
@@ -89,6 +89,6 @@ export class ServerModel extends BaseModel {
       .join("servers as s", "s.id", "sm.serverId")
       .select<
         IServerMember[]
-      >("userName as memberName", "serverName", "u.id as memberId", "sm.createdAt as joinedOn");
+      >("userName as memberName", "serverRole", "serverName", "u.id as memberId", "sm.createdAt as joinedOn");
   }
 }

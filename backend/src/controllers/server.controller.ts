@@ -9,13 +9,14 @@ import {
 } from "../interfaces";
 import { ServerService } from "../services";
 import { httpStatusCode } from "../utils";
-import { http } from "winston";
 
 export async function createServer(
   req: Request<any, any, INewServer>,
   res: Response,
 ) {
   const { body, file } = req;
+
+  console.log(req.file);
   if (!req.user) throw new BadRequestError(`User not found`);
   const {
     user: { id },

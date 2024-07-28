@@ -52,6 +52,7 @@ export async function login(data: IUserWithEmailAndPassword) {
   return {
     accessToken,
     refreshToken,
+    payload,
   };
 }
 
