@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#app {
+  background: url("/assets/images/background.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 100vh;
+}
