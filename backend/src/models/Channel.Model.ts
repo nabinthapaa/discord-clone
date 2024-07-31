@@ -26,8 +26,9 @@ export class ChannelModel extends BaseModel {
 
   static getAllChannelOfSever(serverId: UUID) {
     return ChannelModel.queryBuilder()
-      .table("serverChannels")
+      .table("serverChannels as sc")
       .where({ serverId })
-      .select("*");
+      .select("*")
+      .join("servers as s", "s.id", "sc.serverId");
   }
 }

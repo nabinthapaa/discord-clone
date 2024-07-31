@@ -1,3 +1,4 @@
+import { setupMessage } from "../components/messages/setup";
 import { setupSidebar } from "../components/sidebar/setup";
 import { mainViewHtml } from "../constants/html/mainPageHtml";
 import { getAllServers } from "../services/server.service";
@@ -25,4 +26,5 @@ export async function mainViewUi(parent: HTMLDivElement) {
     parent.querySelector<HTMLDivElement>("#message-box")!;
 
   setupSidebar(sidebarComponent, servers?.data);
+  setupMessage(messageBoxComponent);
 }

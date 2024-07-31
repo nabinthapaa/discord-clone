@@ -39,6 +39,7 @@ export async function getServerChannel(
   const channels = await ChannelService.getAllServerChannel(serverId);
 
   return res.status(httpStatusCode.OK).json({
+    message: `Channel retrieved for server ${channels[0].serverName}`,
     data: channels,
   });
 }

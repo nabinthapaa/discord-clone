@@ -1,7 +1,10 @@
-import { SERVER_BASE_URL } from "../constants/requestUrls/serverFetch";
+import {
+  CHANNEL_BASE_URL,
+  SERVER_BASE_URL,
+} from "../constants/requestUrls/serverFetch";
 import { HttpMethod } from "../enums/method";
 import { Toast } from "../enums/toast";
-import { IServerData } from "../interfaces/server.interface";
+import { IChannelData, IServerData } from "../interfaces/server.interface";
 import { IServerFormData } from "../schemas/server.schema";
 import { UUID } from "../types";
 import { requestToServer } from "../utils/requestHandler";
@@ -15,8 +18,6 @@ export async function getAllServers(userId: UUID) {
     },
     (data) => data,
   );
-
-  console.log(servers);
   return servers;
 }
 
@@ -36,8 +37,8 @@ export async function createSever(serverData: IServerFormData) {
 }
 
 export async function getServerInfo(serverId: UUID) {
-  return await requestToServer<IServerData[]>(
-    `${SERVER_BASE_URL}/serverId`,
+  return await requestToServer<IChannelData[]>(
+    `${CHANNEL_BASE_URL}/server/${serverId}`,
     {
       method: HttpMethod.GET,
     },
