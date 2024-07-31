@@ -1,4 +1,4 @@
-import { Toast } from "../types/enums/toast";
+import { Toast } from "../enums/toast";
 import { getComponent } from "./getComponent";
 
 export async function showToast(message: string, toast: Toast) {

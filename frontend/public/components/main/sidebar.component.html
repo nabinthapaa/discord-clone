@@ -1,0 +1,51 @@
+<div
+  class="bg-gray-900 h-full text-purple-lighter flex flex-col w-24 p-6"
+  id="sidebar"
+>
+  <div id="dm-container" class="w-12">
+    <button
+      data-open="false"
+      data-id="direct-message"
+      class="relative cursor-pointer mb-4 border-b border-gray-600 pb-2 group"
+      id="direct-message"
+    >
+      <div
+        class="bg-white h-12 w-12 flex items-center justify-center text-black text-2xl font-semibold rounded-3xl mb-1 overflow-hidden"
+      >
+        <img
+          src="https://cdn.discordapp.com/embed/avatars/2.png"
+          alt="Direct message"
+        />
+      </div>
+    </button>
+  </div>
+  <div id="server-container" class="flex-1"></div>
+  <div
+    id="create-new-server"
+    class="h-12 w-12 bg-gray-300 rounded-full group relative"
+  >
+    <button
+      data-open="false"
+      data-id="create-server"
+      class="relative cursor-pointer w-full h-full grid place-items-center"
+      id="create-server-button"
+    >
+      <svg
+        class="w-12 h-12"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+          clip-rule="evenodd"
+        ></path>
+      </svg>
+    </button>
+    <span
+      class="absolute scale-0 w-auto top-1/2 z-50 p-2 m-2 min-w-max left-[100%] -translate-y-1/2 rounded-md shadow-md text-white bg-gray-900 text-sm font-bold transition-all duration-100 origin-left group-hover:scale-100"
+      >Create new server</span
+    >
+  </div>
+</div>

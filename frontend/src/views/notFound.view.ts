@@ -1,6 +1,9 @@
-export async function notFoundPage() {
-  console.log("Page not found");
-  const response = await fetch("/notFound.component.html");
-  document.body.innerHTML = await response.text();
-  return;
+import { getComponent } from "../utils/getComponent";
+
+export async function notFoundView() {
+  console.log("Not found page");
+
+  const app = document.querySelector(`#app`)!;
+  const response = await getComponent("errors", "notFound");
+  app.innerHTML = response;
 }

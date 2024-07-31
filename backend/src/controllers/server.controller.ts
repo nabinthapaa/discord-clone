@@ -25,6 +25,7 @@ export async function createServer(
   await ServerService.createServer(body.serverName, file?.filename, id);
   return res.status(httpStatusCode.CREATED).json({
     message: "Server created successfully",
+    data: [],
   });
 }
 
@@ -37,6 +38,7 @@ export async function getAllServerOfUser(
   const userServers = await ServerService.getAllUserServer(userId);
 
   return res.status(httpStatusCode.OK).json({
+    message: "Retrieved all server for user",
     data: userServers,
   });
 }
@@ -50,6 +52,7 @@ export async function getAllUsers(
   const users = await ServerService.getAllSeverMembers(id);
 
   return res.status(httpStatusCode.OK).json({
+    message: "Retrieved all user of server",
     data: users,
   });
 }

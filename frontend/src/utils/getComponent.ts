@@ -1,4 +1,4 @@
-import { notFoundPage } from "../views/notFound.view";
+import { notFoundView } from "../views/notFound.view";
 import { Router } from "./router";
 
 export async function getComponent(
@@ -8,7 +8,6 @@ export async function getComponent(
   const filename = folder + "/" + name + ".component.html";
   const data = await fetch(`/components/${filename}`);
   const innerHtml = await data.text();
-  console.log(`Component html ${name}`, innerHtml);
-  if (!innerHtml) return Router.hardNavigate({}, "/notFound", notFoundPage);
+  if (!innerHtml) return Router.hardNavigate("/notFound", notFoundView);
   return innerHtml;
 }

@@ -12,18 +12,18 @@ export async function cookieChecker(
   next: NextFunction,
 ) {
   const cookies = req.cookies;
-  if (!cookies) {
-    next(new UnauthentictedError(`No tokens provided`));
-  }
 
   if (!cookies.accessToken && cookies.refreshToken) {
     try {
       const accessToken = await AuthService.refresh(cookies.refreshToken);
+      const accessTokenCookieExipiry = getMilliseconds(
+        config.jwt.accessExpiresIn || "8h",
+      );
       res.cookie(
         "accessToken",
         accessToken,
         getCookieOptions({
-          maxAge: getMilliseconds(config.jwt.accessExpiresIn || "8h"),
+          maxAge: accessTokenCookieExipiry,
         }),
       );
 
@@ -36,7 +36,6 @@ export async function cookieChecker(
     } catch (e) {
       next(e);
     }
-  }
-
-  next();
+  } else if (cookies.accessToken && cookies.refreshToken) next();
+  else next(new UnauthentictedError(`No tokens provided`));
 }

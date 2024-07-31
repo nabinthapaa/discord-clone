@@ -1,6 +1,6 @@
 <!-- public/compoent.html -->
-<div class="h-[100vh] grid place-items-center">
-  <div class="space-y-4 bg-gray-800 px-6 py-6 rounded-md shadow">
+<div class="h-screen grid place-items-center">
+  <div class="space-y-4 bg-gray-800 px-6 py-6 rounded-md shadow-lg">
     <div>
       <h1 class="text-center font-bold text-gray-50 text-3xl">Welcome back</h1>
       <span class="text-gray-200 text-center text-xs w-[100%] inline-block"
@@ -19,6 +19,7 @@
           class="bg-gray-900 text-gray-50 rounded-lg block w-full p-2.5"
           placeholder="your@email.com"
         />
+        <span class="text-xs text-red-500 font-bold" id="email-error"></span>
       </div>
       <div>
         <label
@@ -33,6 +34,7 @@
           placeholder="••••••••"
           class="bg-gray-900 text-gray-50 rounded-lg block w-full p-2.5"
         />
+        <span class="text-xs text-red-500 font-bold" id="password-error"></span>
       </div>
       <button
         type="submit"

@@ -1,6 +1,6 @@
 <!-- public/compoent.html -->
 <div class="h-[100vh] grid place-items-center">
-  <div class="w-[90%] space-y-4 bg-gray-800 px-6 py-6 rounded-md shadow sm:w-[40%]">
+  <div class="w-[90%] space-y-4 bg-gray-800 px-6 py-6 rounded-md shadow-lg sm:w-[40%]">
     <div>
       <h1 class="text-center font-bold text-gray-50 text-xl">
         Create an account
@@ -23,7 +23,7 @@
         <span class="text-sm text-red-500 font-bold" id="email-error"></span>
       </div>
       <div>
-        <label for="email" class="block mb-2 text-sm font-medium text-gray-300"
+        <label for="userName" class="block mb-2 text-sm font-medium text-gray-300"
           >Username</label
         >
         <input
@@ -36,7 +36,7 @@
         <span class="text-sm text-red-500 font-bold" id="userName-error"></span>
       </div>
       <div>
-        <label for="email" class="block mb-2 text-sm font-medium text-gray-300"
+        <label for="displayName" class="block mb-2 text-sm font-medium text-gray-300"
           >Display name</label
         >
         <input
@@ -65,18 +65,33 @@
       </div>
       <div>
         <label
-          for="password"
+          for="confirmPassword"
           class="block mb-2 text-sm font-medium text-gray-300"
           >Confirm Password</label
         >
         <input
           type="password"
-          name="password"
-          id="password"
+          name="confirmPassword"
+          id="confirmPassword"
           placeholder="••••••••"
           class="bg-gray-900 text-gray-50 rounded-lg block w-full p-2.5"
         />
+        <span class="text-sm text-red-500 font-bold" id="confirmPassword-error"></span>
       </div>
+      <div>
+        <label
+          for="dateOfBirth"
+          class="block mb-2 text-sm font-medium text-gray-300"
+          >Date of Birth</label
+        >
+        <input  
+          class="bg-gray-900 text-gray-50 rounded-lg block w-full p-2.5"
+          type="date" 
+          id="dateOfBirth"
+          name="dateOfBirth"
+        />
+      </div>
+        <span class="text-sm text-red-500 font-bold" id="dateOfBirth-error"></span>
       <button
         type="submit"
         class="w-full text-white bg-highlight-400 hover:bg-highlight-300 font-medium rounded-sm text-sm px-5 py-2.5 text-center"
