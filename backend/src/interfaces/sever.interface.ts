@@ -1,3 +1,4 @@
+import { EServerRole } from "../enums";
 import { UUID } from "../types";
 
 export interface IServer {
@@ -26,6 +27,7 @@ export interface IServerMember {
   serverName: string;
   memberId: UUID;
   joinedOn: Date;
+  serverRole: EServerRole;
 }
 
 export interface IUserSever {

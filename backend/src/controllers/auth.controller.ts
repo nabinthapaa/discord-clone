@@ -19,7 +19,6 @@ export async function login(
   req: Request<any, any, IUserWithEmailAndPassword>,
   res: Response,
 ): Promise<Response<any, Record<string, any>>> {
-  logger.info(`User with id ${req.user?.id} logging in`);
   const { body } = req;
   const response = await AuthService.login(body);
 
@@ -27,6 +26,7 @@ export async function login(
     config.jwt.refreshExpiresIn || "7d",
   );
   const accessTokenExpiry = getMilliseconds(config.jwt.accessExpiresIn || "8h");
+  logger.info(`User with id ${response.payload?.id} logged in`);
 
   return res
     .status(httpStatusCode.ACCEPTED)
@@ -45,7 +45,8 @@ export async function login(
       }),
     )
     .json({
-      ...response,
+      message: "Login succesfull",
+      data: response,
     });
 }
 

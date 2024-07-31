@@ -21,10 +21,13 @@ export async function login(data: IUserWithEmailAndPassword) {
     throw new NotFoundError(`User with email: ${data.email} not found`);
   }
 
-  const isValidPassword = bcrypt.compare(data.password, existingUser.password);
+  const isValidPassword = await bcrypt.compare(
+    data.password,
+    existingUser.password,
+  );
 
   if (!isValidPassword) {
-    throw new UnauthentictedError(`Invalid password`);
+    throw new UnauthentictedError(`Incorrect password`);
   }
 
   const payload: IUserWithoutPassword = {
@@ -52,6 +55,7 @@ export async function login(data: IUserWithEmailAndPassword) {
   return {
     accessToken,
     refreshToken,
+    payload,
   };
 }
 

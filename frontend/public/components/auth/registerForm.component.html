@@ -1,0 +1,112 @@
+<!-- public/compoent.html -->
+<div class="h-[100vh] grid place-items-center">
+  <div class="w-[90%] space-y-4 bg-gray-800 px-6 py-6 rounded-md shadow-lg sm:w-[40%]">
+    <div>
+      <h1 class="text-center font-bold text-gray-50 text-xl">
+        Create an account
+      </h1>
+      <span class="text-gray-200 text-center text-xs w-[100%] inline-block"
+        >Excited to see you</span
+    </div>
+    <form class="space-y-4  px-6 py-6" id="form">
+      <div>
+        <label for="email" class="block mb-2 text-sm font-medium text-gray-300">
+          Email</label
+        >
+        <input
+          type="email"
+          name="email"
+          id="email"
+          class="bg-gray-900 text-gray-50 rounded-lg block w-full p-2.5"
+          placeholder="your@email.com"
+        />
+        <span class="text-sm text-red-500 font-bold" id="email-error"></span>
+      </div>
+      <div>
+        <label for="userName" class="block mb-2 text-sm font-medium text-gray-300"
+          >Username</label
+        >
+        <input
+          type="text"
+          name="userName"
+          id="userName"
+          class="bg-gray-900 text-gray-50 rounded-lg block w-full p-2.5"
+          placeholder="your unique username"
+        />
+        <span class="text-sm text-red-500 font-bold" id="userName-error"></span>
+      </div>
+      <div>
+        <label for="displayName" class="block mb-2 text-sm font-medium text-gray-300"
+          >Display name</label
+        >
+        <input
+          type="text"
+          name="displayName"
+          id="displayName"
+          class="bg-gray-900 text-gray-50 rounded-lg block w-full p-2.5"
+          placeholder="Displayed to other user instead of username"
+        />
+        <span class="text-sm text-red-500 font-bold" id="displayName-error"></span>
+      </div>
+      <div>
+        <label
+          for="password"
+          class="block mb-2 text-sm font-medium text-gray-300"
+          >Password</label
+        >
+        <input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="••••••••"
+          class="bg-gray-900 text-gray-50 rounded-lg block w-full p-2.5"
+        />
+        <span class="text-sm text-red-500 font-bold" id="password-error"></span>
+      </div>
+      <div>
+        <label
+          for="confirmPassword"
+          class="block mb-2 text-sm font-medium text-gray-300"
+          >Confirm Password</label
+        >
+        <input
+          type="password"
+          name="confirmPassword"
+          id="confirmPassword"
+          placeholder="••••••••"
+          class="bg-gray-900 text-gray-50 rounded-lg block w-full p-2.5"
+        />
+        <span class="text-sm text-red-500 font-bold" id="confirmPassword-error"></span>
+      </div>
+      <div>
+        <label
+          for="dateOfBirth"
+          class="block mb-2 text-sm font-medium text-gray-300"
+          >Date of Birth</label
+        >
+        <input  
+          class="bg-gray-900 text-gray-50 rounded-lg block w-full p-2.5"
+          type="date" 
+          id="dateOfBirth"
+          name="dateOfBirth"
+        />
+      </div>
+        <span class="text-sm text-red-500 font-bold" id="dateOfBirth-error"></span>
+      <button
+        type="submit"
+        class="w-full text-white bg-highlight-400 hover:bg-highlight-300 font-medium rounded-sm text-sm px-5 py-2.5 text-center"
+      >
+        Register
+      </button>
+      <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+        Already have an account?
+        <a
+          href="/login"
+          id="sign-in"
+          class="font-medium text-highlight-400 hover:underline"
+          >Sign in</a
+        >
+      </p>
+    </form>
+  </div>
+</div>

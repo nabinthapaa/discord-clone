@@ -1,33 +1,23 @@
-import express, { Response } from "express";
-import config from "../config";
+import express, { NextFunction, Response } from "express";
 import { Request } from "../interfaces";
-import { requestWrapper } from "../utils";
-import upload from "../utils/multer";
-import { saveImage } from "../utils/saveImage";
+import { httpStatusCode, requestWrapper } from "../utils";
 import authRouter from "./auth.routes";
+import channelRouter from "./channel.routes";
 import serverRouter from "./server.routes";
 
 const router = express();
 
-// TODO: Remove later
-router.post(
-  "/",
-  upload.single("image"),
-  requestWrapper(async (req: Request, res: Response) => {
-    const reply = await saveImage(req.file?.filename);
-    res
-      .status(200)
-      .cookie("name", "nishangay", {
-        httpOnly: true,
-        sameSite: "strict",
-      })
-      .json({
-        ...reply,
-      });
+router.get(
+  "/health",
+  requestWrapper(async (req: Request, res: Response, next: NextFunction) => {
+    return res.status(httpStatusCode.OK).json({
+      message: "Server listening on port http://localhost:8000",
+    });
   }),
 );
 
 router.use("/", authRouter);
 router.use("/servers", serverRouter);
+router.use("/channels", channelRouter);
 
 export default router;

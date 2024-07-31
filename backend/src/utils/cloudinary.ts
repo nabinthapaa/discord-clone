@@ -26,3 +26,26 @@ export async function saveImage(
   await unlink(path);
   return cloudinaryReturns;
 }
+
+export async function getImage(
+  image: string,
+  width: number = 250,
+): Promise<string | null> {
+  if (!image) {
+    return null;
+  }
+  const cloudinaryReturns = cloudinary.image(image, {
+    quality: "auto",
+    fetch_format: "auto",
+    width,
+  });
+
+  if (cloudinaryReturns) {
+    return cloudinaryReturns
+      .split(" ")[1]
+      .split("=")[1]
+      .split("?")[0]
+      .replace("'", "");
+  }
+  return null;
+}
