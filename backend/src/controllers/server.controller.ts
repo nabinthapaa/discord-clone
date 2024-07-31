@@ -16,7 +16,6 @@ export async function createServer(
 ) {
   const { body, file } = req;
 
-  console.log(req.file);
   if (!req.user) throw new BadRequestError(`User not found`);
   const {
     user: { id },

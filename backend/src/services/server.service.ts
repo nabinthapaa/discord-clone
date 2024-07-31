@@ -11,10 +11,8 @@ export async function createServer(
   userId: UUID,
 ) {
   let imageUrl: string | undefined;
-  console.log({ name, image, userId });
   if (image) {
     const response = await saveImage(image);
-    console.log("Cloudinary response: ", response);
     imageUrl = response?.public_id;
   }
 
@@ -35,10 +33,16 @@ export async function getServerById(id: UUID) {
   return { ...data, serverPicture: serverImage };
 }
 
-export function getAllUserServer(userId: UUID) {
+export async function getAllUserServer(userId: UUID) {
   const user = UserService.getUserById(userId);
   if (!user) throw new Error(`User specified is not found`);
-  return ServerModel.getAllUserServer(userId);
+  const servers = await ServerModel.getAllUserServer(userId);
+  servers.forEach(async (server) => {
+    server.serverPicture = server.serverPicture
+      ? await getServerImage(server.serverPicture)
+      : null;
+  });
+  return servers;
 }
 
 export function addUserToServer(id: UUID, userId: UUID) {
@@ -62,7 +66,6 @@ export function getAllSeverMembers(serverId: UUID) {
 export async function deleteServer(serverId: UUID, userId: UUID) {
   const server = await ServerModel.getOwner(serverId);
   if (server) {
-    console.log(server, userId);
     if (server.userId === userId)
       return ServerModel.deleteServer(serverId, userId);
     throw new BadRequestError(`User mismatched`);

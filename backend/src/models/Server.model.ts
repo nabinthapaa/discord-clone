@@ -1,4 +1,4 @@
-import { EServerRole } from "../enums";
+import { EChanneType, EServerRole } from "../enums";
 import { NotFoundError } from "../errors";
 import {
   IServer,
@@ -21,6 +21,23 @@ export class ServerModel extends BaseModel {
         userId: newServer.ownerId,
         serverRole: EServerRole.OWNER,
       });
+
+      await trx("server_channels").insert([
+        {
+          serverId: newServer.id,
+          createdBy: newServer.ownerId,
+          channelName: "general",
+          channelPermission: EServerRole.GUEST,
+          channelType: EChanneType.TEXT,
+        },
+        {
+          serverId: newServer.id,
+          createdBy: newServer.ownerId,
+          channelName: "general",
+          channelPermission: EServerRole.GUEST,
+          channelType: EChanneType.VOICE,
+        },
+      ]);
     });
   }
 

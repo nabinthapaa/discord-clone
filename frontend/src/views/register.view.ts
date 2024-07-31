@@ -7,11 +7,11 @@ import { Router } from "../utils/router";
 import { showToast } from "../utils/showToast";
 import { validate } from "../utils/validator";
 import { loginForm } from "./login.view";
-import { mainViewUi } from "./main.view";
+import { register } from "../services/auth.service";
+import { IRegister } from "../interfaces/auth.interface";
 
 async function handleFormSubmit(data: FormData, formParent: HTMLDivElement) {
   const dataObject = Object.fromEntries(data.entries());
-
   const formDataObject = {
     ...dataObject,
     dateOfBirth: new Date(dataObject.dateOfBirth as string),
@@ -23,25 +23,10 @@ async function handleFormSubmit(data: FormData, formParent: HTMLDivElement) {
       document.querySelector(`#${err.error}-error`)!.textContent = err.message;
     });
   } else if (success) {
-    await requestToServer(
-      "http://localhost:8000/register",
-      {
-        method: HttpMethod.POST,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: JSON.stringify(formDataObject),
-      },
-      (data: any) => {
-        showToast(data.message, Toast.SUCCESS);
-        localStorage.setItem("accessToken", data.data.accessToken);
-        Router.navigateWithData(
-          "/@me",
-          () => mainViewUi(formParent),
-          data.data,
-        );
-      },
-    );
+    const data = await register(formDataObject as IRegister);
+    if (data) {
+      Router.hardNavigate("/login", () => loginForm(formParent));
+    }
   }
 }
 

@@ -687,16 +687,12 @@ video {
   inset: -0.25rem;
 }
 
-.-right-52 {
-  right: -13rem;
-}
-
-.-right-\[100\%\] {
-  right: -100%;
-}
-
 .left-1\/2 {
   left: 50%;
+}
+
+.left-\[100\%\] {
+  left: 100%;
 }
 
 .top-0 {
@@ -705,18 +701,6 @@ video {
 
 .top-1\/2 {
   top: 50%;
-}
-
-.-right-0 {
-  right: -0px;
-}
-
-.-right-1\/2 {
-  right: -50%;
-}
-
-.left-\[100\%\] {
-  left: 100%;
 }
 
 .isolate {
@@ -996,6 +980,10 @@ video {
   max-height: 100%;
 }
 
+.min-h-12 {
+  min-height: 3rem;
+}
+
 .w-10 {
   width: 2.5rem;
 }
@@ -1158,12 +1146,6 @@ video {
 .scale-0 {
   --tw-scale-x: 0;
   --tw-scale-y: 0;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.scale-100 {
-  --tw-scale-x: 1;
-  --tw-scale-y: 1;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -3265,6 +3247,11 @@ video {
 
 .hover\:focus\:text-center:focus:hover {
   text-align: center;
+}
+
+.disabled\:bg-highlight-300:disabled {
+  --tw-bg-opacity: 1;
+  background-color: rgb(78 90 215 / var(--tw-bg-opacity));
 }
 
 .group:hover .group-hover\:scale-100 {

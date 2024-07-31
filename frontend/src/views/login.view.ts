@@ -1,7 +1,9 @@
+import { loginFormHtml } from "../constants/html/loginFormHtml";
 import { ILogin } from "../interfaces/auth.interface";
 import { loginSchema } from "../schemas/auth.schema";
 import { login } from "../services/auth.service";
 import { getComponent } from "../utils/getComponent";
+import { getHtml } from "../utils/getPageHtml";
 import { Router } from "../utils/router";
 import { validate } from "../utils/validator";
 import { mainViewUi } from "./main.view";
@@ -23,13 +25,13 @@ async function handleFormSubmit(data: FormData, formParent: HTMLDivElement) {
     };
     const data = await login(loginData);
     if (data) {
-      Router.navigateWithData("/@me", () => mainViewUi(formParent), data.data);
+      Router.navigateWithData("/@me", () => mainViewUi(formParent), data);
     }
   }
 }
 
 export async function loginForm(app: HTMLDivElement) {
-  const loginFormContent = await getComponent("auth", "loginForm");
+  const loginFormContent = await getHtml(loginFormHtml);
   app.innerHTML = loginFormContent;
   const form = app.querySelector("#form") as HTMLFormElement;
 

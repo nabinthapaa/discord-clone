@@ -1,6 +1,6 @@
 import { HttpMethod } from "../enums/method";
 import { Toast } from "../enums/toast";
-import { IServerResponse } from "../interfaces/response.interface";
+import { ISeverResponse } from "../interfaces/response.interface";
 import { showToast } from "./showToast";
 
 export async function requestToServer<T extends Record<string, any>>(
@@ -14,8 +14,8 @@ export async function requestToServer<T extends Record<string, any>>(
     headers?: HeadersInit;
     data?: BodyInit;
   },
-  callBack?: (data: IServerResponse<T>) => T[],
-): Promise<T[] | undefined> {
+  callBack?: (data: ISeverResponse<T>) => ISeverResponse<T>,
+): Promise<ISeverResponse<T> | undefined> {
   try {
     const response = await fetch(url, {
       method,
@@ -26,7 +26,7 @@ export async function requestToServer<T extends Record<string, any>>(
       body: method !== HttpMethod.GET ? data : null,
     });
 
-    const responseData: IServerResponse<T> = await response.json();
+    const responseData: ISeverResponse<T> = await response.json();
 
     if (!response.ok) {
       throw new Error(`${responseData.message}`);
@@ -34,7 +34,7 @@ export async function requestToServer<T extends Record<string, any>>(
     if (callBack) {
       return callBack(responseData);
     }
-    return responseData.data;
+    return responseData;
   } catch (e) {
     if (e instanceof Error) {
       showToast(e.message, Toast.ERROR);

@@ -12,8 +12,6 @@ export async function createChannel(server: IChannel, userId: UUID) {
   if (user.serverRole === EServerRole.GUEST || userId !== user.memberId)
     throw new BadRequestError(`Invalid action`);
 
-  console.log(server);
-
   return ChannelModel.createChannel({ ...server, createdBy: userId });
 }
 
@@ -38,7 +36,6 @@ export function getAllServerChannel(serverId: UUID) {
 
 export async function getUserPermssion(serverId: UUID, userId: UUID) {
   const serverMemebers = await ServerService.getAllSeverMembers(serverId);
-  console.log(serverMemebers, userId);
   const user = serverMemebers.find((sm) => sm.memberId === userId);
   if (!user) throw new BadRequestError(`Invalid User`);
 

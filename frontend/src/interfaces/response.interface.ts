@@ -1,4 +1,4 @@
-export interface IServerResponse<T extends Record<string, any>> {
+export interface ISeverResponse<T> {
   message: string;
-  data: T[];
+  data: T;
 }

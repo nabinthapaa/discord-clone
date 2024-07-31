@@ -17,7 +17,6 @@ export async function saveImage(
     return;
   }
   const path = join("/", "tmp", image);
-  console.log("Uploading to cloudinary");
   const cloudinaryReturns = await cloudinary.uploader.upload(path, {
     quality_analysis: true,
     folder: folder || "discord-clone",
@@ -31,9 +30,9 @@ export async function saveImage(
 export async function getImage(
   image: string,
   width: number = 250,
-): Promise<string | undefined> {
+): Promise<string | null> {
   if (!image) {
-    return;
+    return null;
   }
   const cloudinaryReturns = cloudinary.image(image, {
     quality: "auto",
@@ -41,5 +40,12 @@ export async function getImage(
     width,
   });
 
-  return cloudinaryReturns.split(" ")[1].split("=")[1].split("?")[0];
+  if (cloudinaryReturns) {
+    return cloudinaryReturns
+      .split(" ")[1]
+      .split("=")[1]
+      .split("?")[0]
+      .replace("'", "");
+  }
+  return null;
 }
