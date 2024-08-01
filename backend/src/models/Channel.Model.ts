@@ -28,7 +28,13 @@ export class ChannelModel extends BaseModel {
     return ChannelModel.queryBuilder()
       .table("serverChannels as sc")
       .where({ serverId })
-      .select("*")
+      .select(
+        "sc.id as id",
+        "s.id as serverId",
+        "channelName",
+        "channelPermission",
+        "channelType",
+      )
       .join("servers as s", "s.id", "sc.serverId");
   }
 }

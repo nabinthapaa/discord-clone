@@ -5,16 +5,17 @@ import { Router } from "./utils/router";
 import { loginForm } from "./views/login.view";
 import { mainViewUi } from "./views/main.view";
 import { notFoundView } from "./views/notFound.view";
-import { getLocalData } from "./utils/getLocaldata";
+import { authStore } from "./store/authStore";
 
-export const socket = io("http://localhost:8000");
+export const socket = io("http://localhost:8000", {
+  withCredentials: true,
+});
+
 const app = document.querySelector<HTMLDivElement>("#app")!;
-
 const currentPath = location.pathname;
-const localData = getLocalData();
 
 if (isValidPath(currentPath)) {
-  if (!localData) {
+  if (!authStore.getState().isAuthenticated) {
     Router.hardNavigate("/login", () => {
       loginForm(app);
     });
@@ -24,3 +25,19 @@ if (isValidPath(currentPath)) {
 } else {
   Router.hardNavigate("/not-found", notFoundView);
 }
+
+authStore.subscribe(() => {
+  if (isValidPath(currentPath)) {
+    console.log(authStore.getState());
+    if (!authStore.getState().isAuthenticated) {
+      console.log("Unauthenticated", authStore.getState());
+      Router.hardNavigate("/login", () => {
+        loginForm(app);
+      });
+    } else {
+      Router.hardNavigate("/@me", () => mainViewUi(app));
+    }
+  } else {
+    Router.hardNavigate("/not-found", notFoundView);
+  }
+});

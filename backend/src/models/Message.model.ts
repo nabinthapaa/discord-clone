@@ -81,17 +81,18 @@ export class MessageModel extends BaseModel {
           channelId,
           serverId,
           content: message,
+          senderId: userId,
         })
         .returning<IChannelMessageDB[]>([
           "id as messageId",
           "content as message",
-          "created_at as sendOn",
-          "is_pinned as isPinned",
+          "createdAt as sentOn",
+          "isPinned as isPinned",
         ]);
 
       const [senderName] = await trx("users")
         .where({ id: userId })
-        .returning(["display_name"]);
+        .returning(["displayName", "userName"]);
       const [serverName] = await trx("servers")
         .where({ id: serverId })
         .returning(["name"]);
@@ -102,27 +103,29 @@ export class MessageModel extends BaseModel {
       return {
         ...newMessage,
         senderName: senderName.display_name,
+        userName: senderName.userName,
         serverName: serverName.name,
         channelName: channelName.name,
+        serverId,
       };
     });
   }
 
-  static async getChannelMessages(channelId: UUID, serverId: UUID) {
+  static async getChannelMessages(channelId: UUID) {
     return await MessageModel.queryBuilder()
       .table("server_messages as sm")
       .select<IChannelMessage[]>(
-        "sm.id as message_id",
+        "sm.id as messageId",
         "sm.content as message",
-        "sm.created_at as send_on",
-        "sc.name as channelName",
-        "u.name as sender_name",
+        "sm.created_at as sentOn",
+        "sc.channelName as channelName",
+        "u.displayName as senderName",
+        "u.userName as userName",
       )
-      .where("sm.server_id", "=", serverId)
-      .andWhere("sm.channel_id", "=", channelId)
-      .join("server_channels as sc", "sm.channel_id", "sc.id")
-      .join("users as u", "sm.sender_id", "u.id")
-      .orderBy([{ column: "sm.created_at", order: "desc" }])
+      .andWhere("sm.channelId", "=", channelId)
+      .join("serverChannels as sc", "sm.channelId", "sc.id")
+      .join("users as u", "sm.senderId", "u.id")
+      .orderBy([{ column: "sm.createdAt", order: "desc" }])
       .limit(20);
   }
 }

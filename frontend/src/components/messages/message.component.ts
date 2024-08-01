@@ -6,10 +6,11 @@ export function message({
   message,
   time,
 }: Record<string, string>) {
+  const imageSource = !image ? IMAGE_SOURCE : image;
   const div = document.createElement("div");
   div.innerHTML = `
   <div  class="border-b border-gray-600 py-3 flex items-start mb-4 text-sm">
-    <img src="${image ? IMAGE_SOURCE : image}" class="cursor-pointer w-10 h-10 rounded-3xl mr-3">
+    <img src="${imageSource}" class="cursor-pointer w-10 h-10 rounded-3xl mr-3">
     <div class="flex-1 overflow-hidden">
       <div>
         <span class="font-bold text-red-300 cursor-pointer hover:underline">${displayName}</span>

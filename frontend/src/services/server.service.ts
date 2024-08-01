@@ -1,7 +1,8 @@
 import {
-  CHANNEL_BASE_URL,
-  SERVER_BASE_URL,
-} from "../constants/requestUrls/serverFetch";
+  CREATE_SERVER_URL,
+  GET_CHANNELS_URL,
+  GET_USER_SERVERS_URL,
+} from "../constants/backendRoutes/routes";
 import { HttpMethod } from "../enums/method";
 import { Toast } from "../enums/toast";
 import { IChannelData, IServerData } from "../interfaces/server.interface";
@@ -12,7 +13,7 @@ import { showToast } from "../utils/showToast";
 
 export async function getAllServers(userId: UUID) {
   const servers = await requestToServer<IServerData[]>(
-    `${SERVER_BASE_URL}/users/${userId}`,
+    GET_USER_SERVERS_URL(userId),
     {
       method: HttpMethod.GET,
     },
@@ -21,9 +22,9 @@ export async function getAllServers(userId: UUID) {
   return servers;
 }
 
-export async function createSever(serverData: IServerFormData) {
+export async function createServer(serverData: IServerFormData) {
   return await requestToServer<IServerData[]>(
-    `${SERVER_BASE_URL}`,
+    CREATE_SERVER_URL,
     {
       method: HttpMethod.POST,
       headers: {},
@@ -36,9 +37,9 @@ export async function createSever(serverData: IServerFormData) {
   );
 }
 
-export async function getServerInfo(serverId: UUID) {
+export async function getServerChannels(serverId: UUID) {
   return await requestToServer<IChannelData[]>(
-    `${CHANNEL_BASE_URL}/server/${serverId}`,
+    GET_CHANNELS_URL(serverId),
     {
       method: HttpMethod.GET,
     },

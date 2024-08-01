@@ -2,7 +2,7 @@ import { loginFormHtml } from "../constants/html/loginFormHtml";
 import { ILogin } from "../interfaces/auth.interface";
 import { loginSchema } from "../schemas/auth.schema";
 import { login } from "../services/auth.service";
-import { getComponent } from "../utils/getComponent";
+import { authStore } from "../store/authStore";
 import { getHtml } from "../utils/getPageHtml";
 import { Router } from "../utils/router";
 import { validate } from "../utils/validator";
@@ -24,8 +24,14 @@ async function handleFormSubmit(data: FormData, formParent: HTMLDivElement) {
       password: password as string,
     };
     const data = await login(loginData);
+
     if (data) {
-      Router.navigateWithData("/@me", () => mainViewUi(formParent), data);
+      authStore.getState().login(data.data.payload);
+      return Router.navigateWithData(
+        "/@me",
+        async () => await mainViewUi(formParent),
+        data,
+      );
     }
   }
 }

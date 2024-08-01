@@ -1,4 +1,6 @@
-export function getLocalData() {
+import { IloginPayload } from "../interfaces/auth.interface";
+
+export function getLocalData(): IloginPayload | null {
   const accessToken = localStorage.getItem("accessToken");
   const userData = JSON.parse(
     localStorage.getItem("userData") || `{ "error": true }`,

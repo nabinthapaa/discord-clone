@@ -1,20 +1,22 @@
+import { setupChannelBar } from "../components/channelBar/setup";
 import { setupMessage } from "../components/messages/setup";
 import { setupSidebar } from "../components/sidebar/setup";
 import { mainViewHtml } from "../constants/html/mainPageHtml";
 import { getAllServers } from "../services/server.service";
-import { getLocalData } from "../utils/getLocaldata";
+import { authStore } from "../store/authStore";
+import { serverStateStore } from "../store/serverStateStore";
 import { getHtml } from "../utils/getPageHtml";
-import { Router } from "../utils/router";
-import { loginForm } from "./login.view";
 
 export async function mainViewUi(parent: HTMLDivElement) {
   const html = await getHtml(mainViewHtml);
   parent.innerHTML = html;
   parent.style.display = "flex";
 
-  // Fetching locally stored user data
-  const userData = await getLocalData();
-  if (!userData) Router.hardNavigate("/login", () => loginForm(parent));
+  const userData = authStore.getState().userData;
+  if (!userData) {
+    authStore.getState().logout();
+    return;
+  }
 
   // Fetching all servers of user stored locally
   const servers = await getAllServers(userData.id);
@@ -26,5 +28,9 @@ export async function mainViewUi(parent: HTMLDivElement) {
     parent.querySelector<HTMLDivElement>("#message-box")!;
 
   setupSidebar(sidebarComponent, servers?.data);
+  setupChannelBar(channelBarComponent);
+  if (servers && servers.data) {
+    serverStateStore.getState().changeActiveServer(servers.data[0].serverId);
+  }
   setupMessage(messageBoxComponent);
 }

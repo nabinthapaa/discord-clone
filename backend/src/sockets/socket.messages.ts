@@ -1,24 +1,51 @@
 import { Socket } from "socket.io";
+import cookie from "cookie";
+import { MessageService } from "../services";
 
-export const messageSocket = (_io: Socket) => {
-  _io.on("message", (data) => {
-    console.log(data);
-    _io.emit("message-response", {
-      message: data.message,
-    });
+export const messageSocket = (socket: Socket) => {
+  // Track the current room of the user
+  let currentRoom: string | null = null;
+
+  socket.on("message", async (data) => {
+    if (currentRoom) {
+      const cookies = cookie.parse(socket.handshake.headers.cookie || "");
+      try {
+        const writtenMessage = await MessageService.createChannelMessage(
+          data.channelId,
+          data.message,
+          data.userId,
+          data.serverId,
+        );
+        socket.to(currentRoom).emit("message-response", {
+          ...writtenMessage,
+        });
+
+        socket.emit("message-response", {
+          ...writtenMessage,
+        });
+      } catch (e) {
+        socket.emit("message-error", {
+          error: "Error setting up message",
+        });
+      }
+    } else {
+      console.log("User is not in any room.");
+    }
   });
 
-  _io.on("joinChannel", (data) => {
-    let rooms = Array.from(_io.rooms);
-
+  socket.on("joinChannel", (data) => {
+    // Leave all previous rooms
+    let rooms = Array.from(socket.rooms);
     rooms.forEach((room) => {
-      if (room !== data.id) {
+      if (room !== socket.id) {
         console.log(`User left room ${room}`);
-        _io.leave(room);
+        socket.leave(room);
       }
     });
 
-    console.log(`User joined room ${data.id}`);
-    _io.join(data.id);
+    // Join the new room
+    currentRoom = data.id;
+    console.log(`User joined room ${currentRoom}`);
+    socket.join(data.id);
   });
 };

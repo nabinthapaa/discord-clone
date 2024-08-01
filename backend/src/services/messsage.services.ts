@@ -31,13 +31,11 @@ export async function createDirectMessage(
   }
 }
 
-export async function getChannelMessages(channelId: UUID, serverId: UUID) {
+export async function getChannelMessages(channelId: UUID) {
   try {
-    return await MessageModel.getChannelMessages(channelId, serverId);
+    return await MessageModel.getChannelMessages(channelId);
   } catch (e) {
-    logger.error(
-      `Error retrieving messages for channel: ${channelId} and server: ${serverId}`,
-    );
+    logger.error(`Error retrieving messages for channel: ${channelId}`);
     throw new BaseError(`Could not retrieve messages`);
   }
 }

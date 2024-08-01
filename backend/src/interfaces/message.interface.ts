@@ -13,6 +13,13 @@ export interface IChannelMessage
   extends Omit<IDirectMessage, "user1Name" | "user2Name"> {
   channelName: string;
   senderName: string;
+  userName: string;
+  serverId: UUID;
+}
+
+export interface IChannelMessageParams {
+  serverId: UUID;
+  channelId: UUID;
 }
 
 export interface IChannelMessageDB

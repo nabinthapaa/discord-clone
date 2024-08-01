@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { loginSchema, registerSchema } from "../schemas/auth.schema";
+import { UUID } from "../types";
 
 export interface ILogin extends z.infer<typeof loginSchema> {}
 export interface IRegister extends z.infer<typeof registerSchema> {}
@@ -11,7 +12,7 @@ export interface IloginData {
 }
 
 export interface IloginPayload {
-  id: string;
+  id: UUID;
   email: string;
   displayName: string | null;
   userName: string;
