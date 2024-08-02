@@ -9,7 +9,16 @@
     "start:preview": "vite preview"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.6",
     "typescript": "^5.2.2",
-    "vite": "^5.3.4"
+    "vite": "^5.3.4",
+    "vite-plugin-restart": "^0.4.1",
+    "vite-plugin-watch-and-run": "^1.7.0"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.7.5",
+    "zod": "^3.23.8"
   }
 }

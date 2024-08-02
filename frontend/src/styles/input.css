@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#app {
+  background: url("/assets/images/background.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 100vh;
+}
+
+@keyframes slide-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%), translateX(-50%);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0), translateX(-50%);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(0), translateX(-50%);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100%), translateX(-50%);
+  }
+}
+
+@keyframes pop-up {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.9);
+  }
+  80% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-pop-up {
+  animation: pop-up 600ms ease-in forwards;
+}
+
+.animate-toast {
+  animation: slide-in 2s ease-in-out forwards;
+}
