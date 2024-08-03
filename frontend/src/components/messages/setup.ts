@@ -61,7 +61,17 @@ export function setupMessage(messageContainer: HTMLDivElement) {
   });
 
   socket.on("message-error", (data) => {
-    showToast(data.error, Toast.ERROR);
+    showToast(data.message, Toast.ERROR);
+  });
+
+  socket.on("updated-message", (data) => {
+    messageContainer.querySelector(`#message-${data.messageId}`)!.textContent =
+      data.message;
+  });
+
+  socket.on("deleted-message", (data) => {
+    const message = messageContainer.querySelector(`#id-${data.messageId}`)!;
+    message.parentNode?.removeChild(message);
   });
 }
 
@@ -92,21 +102,25 @@ function setupEditAndDelete(messageId: UUID, messageComponent: HTMLDivElement) {
   const actionsMenu = messageComponent.querySelector<HTMLDivElement>(
     `#message-actions-${messageId}`,
   )!;
-  const message =
-    messageComponent.querySelector<HTMLParagraphElement>("#message")!;
+  const message = messageComponent.querySelector<HTMLParagraphElement>(
+    `#message-${messageId}`,
+  )!;
   const editForm =
     messageComponent.querySelector<HTMLFormElement>("#edit-message-form")!;
 
   messageEditButton.onclick = () => {
     actionsMenu.classList.toggle("hidden");
+
     actionsMenu.querySelector<HTMLDivElement>("#edit-button")!.onclick = () => {
       actionsMenu.classList.toggle("hidden");
       message.classList.toggle("hidden");
       editForm.classList.toggle("hidden");
+
       editForm.onsubmit = (e) => {
         e.preventDefault();
         socket.emit("update-message", {
           messageId,
+          message: new FormData(editForm).get("message"),
         });
         editForm.classList.toggle("hidden");
         message.classList.toggle("hidden");

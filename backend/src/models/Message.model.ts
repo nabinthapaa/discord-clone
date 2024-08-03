@@ -29,6 +29,13 @@ export class MessageModel extends BaseModel {
       });
   }
 
+  static getMessageById(id: UUID) {
+    return MessageModel.queryBuilder()
+      .table("serverMessages")
+      .where({ id })
+      .first();
+  }
+
   static createDirectMessages({
     user1Id,
     user2Id,
@@ -134,5 +141,28 @@ export class MessageModel extends BaseModel {
       .join("users as u", "sm.senderId", "u.id")
       .orderBy([{ column: "sm.createdAt", order: "desc" }])
       .limit(20);
+  }
+
+  static async updateChannelMessage(
+    id: UUID,
+    message: string,
+    userId: UUID,
+  ): Promise<{ content: string }> {
+    return await MessageModel.queryBuilder().transaction(async (trx) => {
+      await trx("serverMessages")
+        .where({ id, senderId: userId })
+        .update("content", message);
+
+      return await trx("serverMessages")
+        .select("content")
+        .where({ id })
+        .first();
+    });
+  }
+
+  static async deleteChannelMessage(id: UUID) {
+    return await MessageModel.queryBuilder().transaction(async (trx) => {
+      await trx("serverMessages").where({ id }).del();
+    });
   }
 }

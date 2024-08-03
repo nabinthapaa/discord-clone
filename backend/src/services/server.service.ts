@@ -51,6 +51,13 @@ export function addUserToServer(id: UUID, userId: UUID) {
   return ServerModel.addUserToServer(id, userId);
 }
 
+export function addUserFromInvitaionCode(code: UUID, userId: UUID) {
+  const user = UserService.getUserById(userId);
+  if (!user) throw new Error(`User specified is not found`);
+
+  return ServerModel.addFromInvitation(code, userId);
+}
+
 export function removeUserFromServer(id: UUID, userId: UUID) {
   const user = UserService.getUserById(userId);
   if (!user) throw new Error(`User specified is not found`);

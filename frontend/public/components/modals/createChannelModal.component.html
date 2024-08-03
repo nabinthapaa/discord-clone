@@ -1,6 +1,6 @@
 <div
   tabindex="-1"
-  id="create-server-modal"
+  id="create-channel-modal"
   aria-hidden="true"
   class="backdrop-blur-sm fixed scale-0 min-w-full min-h-full overflow-x-hidden top-0 left-0 z-40 grid place-items-center"
 >
@@ -11,12 +11,12 @@
           class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600"
         >
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            Create New Server
+            Create a new text channel
           </h3>
           <button
             type="button"
             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-            id="close-modal"
+            id="close-create-channel-modal"
           >
             <svg
               class="w-3 h-3"
@@ -37,51 +37,52 @@
           </button>
         </div>
         <form
-          id="create-server-form"
+          id="create-channel-form"
           class="p-4 md:p-5 flex flex-col items-center"
         >
           <div class="grid gap-4 mb-4 grid-cols-2">
             <div class="col-span-2">
               <label
-                for="serverName"
+                for="channelName"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Server name</label
+                >Channel Name</label
               >
               <input
                 type="text"
-                name="serverName"
-                id="serverName"
+                name="channelName"
+                id="channelName"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 placeholder="New server name..."
               />
               <span
                 class="text-xs text-red-500 font-bold"
-                id="serverName-error"
+                id="channelName-error"
               ></span>
             </div>
             <div class="col-span-2">
               <label
-                for="serverImage"
+                for="channelType"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Server Image</label
+                >Channel Type</label
               >
-              <input
-                type="file"
-                accept="png jpg jpeg"
-                name="serverImage"
-                id="serverImage"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Upload server image"
-              />
+              <select
+                id="channelType"
+                name="channelType"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              >
+                <option selected="">Select channel type</option>
+                <option value="text">Text</option>
+                <option value="voice">Voice</option>
+              </select>
               <span
                 class="text-xs text-red-500 font-bold"
-                id="serverImage-error"
+                id="channelType-error"
               ></span>
             </div>
           </div>
           <button
             type="submit"
-            class="disabled:bg-gray-800 text-white w-full inline-flex items-center justify-center bg-highlight-400 hover:bg-highlight-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+            class="disabled:bg-highlight-300 text-white w-full inline-flex items-center justify-center bg-highlight-400 hover:bg-highlight-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
             id="create-server-button"
           >
             <svg
@@ -96,7 +97,7 @@
                 clip-rule="evenodd"
               ></path>
             </svg>
-            <span> Create server </span>
+            <span> Create Channel </span>
           </button>
         </form>
       </div>

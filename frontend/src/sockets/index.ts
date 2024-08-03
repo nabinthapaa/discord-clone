@@ -1,4 +1,4 @@
-import { socket } from "../main";
+import { socket } from "../constants/otherConnections/other";
 
 socket.on("connect", () => {
   console.log("connected");
@@ -8,5 +8,10 @@ socket.on("connect", () => {
 
 socket.on("hello", (data) => {
   console.log("Recieved hello response");
+  console.log(data);
+});
+
+socket.on("error", (data) => {
+  console.error("Socket Error");
   console.log(data);
 });

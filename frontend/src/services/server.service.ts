@@ -1,4 +1,5 @@
 import {
+  CREATE_CHANNEL_URL,
   CREATE_SERVER_URL,
   GET_CHANNELS_URL,
   GET_USER_SERVERS_URL,
@@ -6,7 +7,8 @@ import {
 import { HttpMethod } from "../enums/method";
 import { Toast } from "../enums/toast";
 import { IChannelData, IServerData } from "../interfaces/server.interface";
-import { IServerFormData } from "../schemas/server.schema";
+import { IChannelFormData, IServerFormData } from "../schemas/server.schema";
+import { serverStateStore } from "../store/serverStateStore";
 import { UUID } from "../types";
 import { requestToServer } from "../utils/requestHandler";
 import { showToast } from "../utils/showToast";
@@ -42,6 +44,25 @@ export async function getServerChannels(serverId: UUID) {
     GET_CHANNELS_URL(serverId),
     {
       method: HttpMethod.GET,
+    },
+    (data) => {
+      showToast(data.message, Toast.INFO);
+      return data;
+    },
+  );
+}
+
+export async function createChannel(channelData: IChannelFormData) {
+  const serverId = serverStateStore.getState().activeServerId;
+  console.log(serverId);
+  return await requestToServer(
+    CREATE_CHANNEL_URL(serverId!),
+    {
+      method: HttpMethod.POST,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify(channelData),
     },
     (data) => {
       showToast(data.message, Toast.INFO);

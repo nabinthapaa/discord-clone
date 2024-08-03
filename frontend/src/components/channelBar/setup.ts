@@ -1,9 +1,18 @@
 import { socket } from "../../constants/otherConnections/other";
 import { PeerService } from "../../mediaConnections/peer";
-import { getServerChannels } from "../../services/server.service";
+import {
+  createChannelSchema,
+  IChannelFormData,
+} from "../../schemas/server.schema";
+import {
+  createChannel,
+  getServerChannels,
+} from "../../services/server.service";
 import { authStore } from "../../store/authStore";
 import { serverStateStore } from "../../store/serverStateStore";
 import { UUID } from "../../types";
+import { addFormError } from "../../utils/addFormErrors";
+import { validate } from "../../utils/validator";
 import {
   connectedUser,
   textChannel,
@@ -11,10 +20,68 @@ import {
 } from "./channelbar.component";
 
 export function setupChannelBar(channelBar: HTMLDivElement) {
+  const createChannelModal = document.querySelector("#create-channel-modal");
+
+  const openCreateChannelModal = (e: MouseEvent, type: string) => {
+    createChannelModal?.classList.toggle("scale-0");
+    createChannelModal?.classList.toggle("animate-pop-up");
+
+    createChannelModal
+      ?.querySelector("#close-create-channel-modal")
+      ?.addEventListener("click", closeCreateChannelModal);
+
+    const form = createChannelModal?.querySelector<HTMLFormElement>(
+      "#create-channel-form",
+    )!;
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const formData = Object.fromEntries(new FormData(form).entries());
+
+      const { errors, success } = validate(createChannelSchema, formData);
+      if (errors) {
+        addFormError(form, errors);
+      } else if (success) {
+        await createChannel(formData as IChannelFormData);
+        closeCreateChannelModal();
+      }
+    };
+  };
+
+  const closeCreateChannelModal = () => {
+    createChannelModal?.classList.add("scale-0");
+    createChannelModal?.classList.remove("animate-pop-up");
+    createChannelModal
+      ?.querySelector("#close-create-channel-modal")
+      ?.removeEventListener("click", closeCreateChannelModal);
+  };
+
+  const createTextChannelButton = channelBar.querySelector<HTMLButtonElement>(
+    "#create-text-channel-button",
+  );
+  const createVoiceChannelButto = channelBar.querySelector<HTMLButtonElement>(
+    "#create-voice-channel-button",
+  );
+
+  createTextChannelButton!.onclick = (e) => {
+    e.preventDefault();
+    openCreateChannelModal(e, "text");
+  };
+
+  createVoiceChannelButto!.onclick = (e) => {
+    e.preventDefault();
+    openCreateChannelModal(e, "voice");
+  };
+
   serverStateStore.subscribe((newState, prevState) => {
     if (newState.activeServerId !== prevState.activeServerId) {
       if (newState.activeServerId)
         fetchServerChannels(newState.activeServerId, channelBar);
+    }
+  });
+
+  document.addEventListener("click", (e) => {
+    if (e.target === createChannelModal) {
+      closeCreateChannelModal();
     }
   });
 }

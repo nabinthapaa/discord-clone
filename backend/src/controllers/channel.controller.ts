@@ -9,10 +9,11 @@ export async function createChannel(
   req: Request<any, any, IChannel>,
   res: Response,
 ) {
+  const { serverId } = req.params;
   const { body } = req;
   const { id } = req.user!;
 
-  await ChannelService.createChannel(body, id);
+  await ChannelService.createChannel({ ...body, serverId }, id);
 
   return res.status(httpStatusCode.CREATED).json({
     message: "Channel created Successfully",

@@ -1,18 +1,17 @@
-import { Socket } from "socket.io";
 import cookie from "cookie";
+import { Socket } from "socket.io";
 import { MessageService } from "../services";
 import { validateMessage } from "./middlewares/validateMessage";
+import { extractPayload } from "../utils/getTokenPayload";
+import { IUserWithoutPassword } from "../interfaces";
 
 export const messageSocket = (socket: Socket) => {
-  // Track the current room of the user
   let currentRoom: string | null = null;
 
   socket.on("message", async (data) => {
     if (currentRoom) {
-      const cookies = cookie.parse(socket.handshake.headers.cookie || "");
       try {
         validateMessage(data);
-
         const writtenMessage = await MessageService.createChannelMessage(
           data.channelId,
           data.message,
@@ -35,6 +34,52 @@ export const messageSocket = (socket: Socket) => {
       }
     } else {
       console.log("User is not in any room.");
+    }
+  });
+
+  socket.on("update-message", async (data) => {
+    try {
+      const cookies = cookie.parse(socket.handshake.headers.cookie || "");
+      const payload = (await extractPayload(
+        cookies.accessToken,
+      )) as IUserWithoutPassword;
+
+      const updatedMessage = await MessageService.editChannelMessage({
+        ...data,
+        senderId: payload.id,
+      });
+
+      socket.emit("updated-message", {
+        message: updatedMessage.content,
+        messageId: data.messageId,
+      });
+    } catch (e) {
+      if (e instanceof Error) {
+        socket.emit("message-error", {
+          message: e.message,
+        });
+      }
+    }
+  });
+
+  socket.on("delete-message", async (data) => {
+    try {
+      const cookies = cookie.parse(socket.handshake.headers.cookie || "");
+      const payload = (await extractPayload(
+        cookies.accessToken,
+      )) as IUserWithoutPassword;
+
+      await MessageService.deleteChannelMessage(data.messageId, payload.id);
+
+      socket.emit("deleted-message", {
+        messageId: data.messageId,
+      });
+    } catch (e) {
+      if (e instanceof Error) {
+        socket.emit("message-error", {
+          message: e.message,
+        });
+      }
     }
   });
 

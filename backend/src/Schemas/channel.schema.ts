@@ -2,9 +2,6 @@ import Joi from "joi";
 import { EChanneType, EServerRole } from "../enums";
 
 export const channelCreationSchema = Joi.object({
-  serverId: Joi.string().uuid().required().messages({
-    "any.required": "Server id is required",
-  }),
   channelName: Joi.string().required().messages({
     "any.required": "Channel name is required",
   }),

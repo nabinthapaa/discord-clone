@@ -9,7 +9,7 @@ export function message({
 }: Record<string, string>) {
   const imageSource = !image ? IMAGE_SOURCE : image;
   const div = document.createElement("div");
-  div.id = messageId;
+  div.id = "id-" + messageId;
   div.innerHTML = `
     <div class="border-b border-gray-600 py-3 flex items-start mb-4 text-sm relative">
       <img src="${imageSource}" class="cursor-pointer w-10 h-10 rounded-3xl mr-3">
@@ -29,11 +29,12 @@ export function message({
             <button data-id="${messageId}" class="block px-4 py-2 text-sm text-white hover:bg-gray-600" id="delete-button">Delete</button>
           </div>
         </div>
-        <p id="message" class="text-white leading-normal">${message}</p>
+        <p id="message-${messageId}" class="text-white leading-normal">${message}</p>
         <form id="edit-message-form" class="hidden space-y-2">
           <textarea 
               class='bg-gray-700 text-white px-2 py-1 border-2 mx-4 border-gray-500 rounded w-4/5 resize-y  h-auto' 
               id="edit-message-input-${messageId}" 
+              name="message"
           >${message}</textarea>
           <div>
             <button type="submit" class="bg-blue-500 text-white px-2 py-1 rounded">Save</button>

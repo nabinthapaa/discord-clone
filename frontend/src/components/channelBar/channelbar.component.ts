@@ -7,7 +7,7 @@ export function textChannel({
 }: Record<string, string>) {
   const div = document.createElement("div");
   div.innerHTML = `
-  <button data-id='${id}'  class="mb-8">
+  <button data-id='${id}'  class="mb-1">
     <div
       class="bg-teal-dark hover:bg-gray-800 cursor-pointer font-semibold py-1 px-4 text-gray-300"
     >
@@ -25,7 +25,7 @@ export function voiceChannel({
 }: Record<string, string>) {
   const div = document.createElement("div");
   div.innerHTML = `
-  <button data-id='${id}'  class="mb-8">
+  <button data-id='${id}'  class="mb-2">
     <div
       class="bg-teal-dark hover:bg-gray-800 cursor-pointer font-semibold py-1 px-4 flex flex-col items-start justify-start text-gray-300"
     >

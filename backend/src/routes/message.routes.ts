@@ -4,11 +4,10 @@ import {
   authenticate,
   authorize,
   cookieChecker,
-  validateRequestBody,
   validateRequestParams,
 } from "../middlewares";
 import { ServerSchema } from "../Schemas";
-import { requestWrapper, upload } from "../utils";
+import { requestWrapper } from "../utils";
 
 const router = express.Router();
 
