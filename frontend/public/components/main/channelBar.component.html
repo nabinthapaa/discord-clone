@@ -3,14 +3,17 @@
   id="channel-bar"
 >
   <div
-    class="text-white mb-2 mt-3 px-4 flex justify-between border-b border-gray-600 py-1 shadow-xl"
+    class="text-white mb-2 relative mt-3 px-4 flex justify-between border-b border-gray-600 py-1 shadow-xl"
   >
     <div class="flex-auto">
-      <h1 class="font-semibold text-xl leading-tight mb-1 truncate">
+      <h1
+        id="server-name"
+        class="font-semibold text-xl leading-tight mb-1 truncate"
+      >
         My Server
       </h1>
     </div>
-    <div>
+    <button id="server-options-button">
       <svg
         class="arrow-gKvcEx icon-2yIBmh opacity-50 cursor-pointer"
         width="24"
@@ -24,6 +27,15 @@
           d="M16.59 8.59004L12 13.17L7.41 8.59004L6 10L12 16L18 10L16.59 8.59004Z"
         ></path>
       </svg>
+    </button>
+    <div
+      id="server-options"
+      class="hidden-content z-40 overflow-hidden absolute p-1 top-[100%] bg-gray-900 shadow-sky-100 origin-top left-0 w-full transition-all duration-500 ease-in-out"
+    >
+      <p class="p-4 bg-gray-800">
+        This is the hidden content that will be shown or hidden when the arrow
+        is clicked.
+      </p>
     </div>
   </div>
   <div class="mb-8">

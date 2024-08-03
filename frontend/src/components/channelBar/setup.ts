@@ -1,5 +1,3 @@
-import { socket } from "../../constants/otherConnections/other";
-import { PeerService } from "../../mediaConnections/peer";
 import {
   createChannelSchema,
   IChannelFormData,
@@ -8,6 +6,7 @@ import {
   createChannel,
   getServerChannels,
 } from "../../services/server.service";
+import { socket } from "../../sockets";
 import { authStore } from "../../store/authStore";
 import { serverStateStore } from "../../store/serverStateStore";
 import { UUID } from "../../types";
@@ -18,11 +17,12 @@ import {
   textChannel,
   voiceChannel,
 } from "./channelbar.component";
+import { peerStore } from "../../store/peerStore";
 
 export function setupChannelBar(channelBar: HTMLDivElement) {
   const createChannelModal = document.querySelector("#create-channel-modal");
 
-  const openCreateChannelModal = (e: MouseEvent, type: string) => {
+  const openCreateChannelModal = () => {
     createChannelModal?.classList.toggle("scale-0");
     createChannelModal?.classList.toggle("animate-pop-up");
 
@@ -64,18 +64,19 @@ export function setupChannelBar(channelBar: HTMLDivElement) {
 
   createTextChannelButton!.onclick = (e) => {
     e.preventDefault();
-    openCreateChannelModal(e, "text");
+    openCreateChannelModal();
   };
 
   createVoiceChannelButto!.onclick = (e) => {
     e.preventDefault();
-    openCreateChannelModal(e, "voice");
+    openCreateChannelModal();
   };
 
   serverStateStore.subscribe((newState, prevState) => {
     if (newState.activeServerId !== prevState.activeServerId) {
-      if (newState.activeServerId)
+      if (newState.activeServerId) {
         fetchServerChannels(newState.activeServerId, channelBar);
+      }
     }
   });
 
@@ -84,6 +85,13 @@ export function setupChannelBar(channelBar: HTMLDivElement) {
       closeCreateChannelModal();
     }
   });
+
+  document
+    ?.querySelector(`#server-options-button`)
+    ?.addEventListener("click", () => {
+      const serverOptions = document.querySelector(`#server-options`)!;
+      serverOptions.classList.toggle("open");
+    });
 }
 
 async function fetchServerChannels(
@@ -115,21 +123,7 @@ async function fetchServerChannels(
           const channelBar = voiceChannel(channel as Record<string, any>);
           voiceChannelGroup.appendChild(channelBar);
           channelBar.onclick = () => {
-            socket.emit("join-voice-room", {
-              channelId: channel.id,
-              id: authStore.getState().userData!.id,
-            });
-            const user = channelBar.querySelector(
-              `#connected-user-${channel.id}`,
-            )!;
-            if (
-              !user.querySelector(`#user-${authStore.getState().userData!.id}`)
-            ) {
-              const userChild = connectedUser(
-                authStore.getState().userData as Record<string, any>,
-              );
-              user.append(userChild);
-            }
+            serverStateStore.getState().updateVoiceChannel(channel.id);
           };
         }
       }
@@ -151,12 +145,13 @@ async function fetchServerChannels(
   }
 
   socket.on("user-connected", async ({ users, ...otherInfo }) => {
+    const peer = peerStore.getState().peer;
     const localUserid = authStore.getState().userData!.id;
-    const peer = new PeerService();
     peer.initializePeer(localUserid);
     await peer.setupAudioStream();
     peer.establishPeerConnections(users);
-    otherInfo.userInfo.forEach((info: any) => {
+    Object.keys(otherInfo.userInfo).forEach((key: any) => {
+      const info = otherInfo.userInfo[key];
       if (info.id !== localUserid) {
         const user = document.querySelector(
           `#connected-user-${otherInfo.channelId}`,
@@ -169,24 +164,49 @@ async function fetchServerChannels(
     });
   });
 
-  socket.on("user-disconnected", async ({ users, ...otherInfo }) => {
-    console.log("user user-disconnected");
-    const localUserid = authStore.getState().userData!.id;
-    const peer = new PeerService();
-    peer.initializePeer(localUserid);
-    await peer.setupAudioStream();
-    peer.establishPeerConnections(users);
-    otherInfo.userInfo.forEach((info: any) => {
-      if (info.id !== localUserid) {
-        const user = document.querySelector(
-          `#connected-user-${otherInfo.channelId}`,
-        )!;
-        user.innerHTML = ``;
-        if (!user.querySelector(`#user-${info.id}`)) {
-          const newConnectedUser = connectedUser(info);
-          user.append(newConnectedUser);
-        }
+  socket.on("user-disconnected", async ({ user, ...otherInfo }) => {
+    const peer = peerStore.getState().peer;
+    if (peer) {
+      peer.endPeerConnection(user);
+
+      const userContainer = document.querySelector(
+        `#connected-user-${otherInfo.channelId}`,
+      );
+      const userElement = userContainer!.querySelector(
+        `#user-${otherInfo.userId}`,
+      );
+      if (userElement) {
+        userElement.parentNode?.removeChild(userElement);
       }
-    });
+    }
+  });
+
+  serverStateStore.subscribe((newState, prevState) => {
+    if (newState.voiceChannel !== prevState.voiceChannel) {
+      socket.emit("join-voice-room", {
+        channelId: newState.voiceChannel,
+        id: authStore.getState().userData!.id,
+      });
+
+      socket.emit("left-voice-room", {
+        channelId: prevState.voiceChannel,
+        id: authStore.getState().userData!.id,
+      });
+
+      const userConnected = document.querySelector(
+        `#user-${authStore.getState().userData!.id}`,
+      );
+      if (userConnected) userConnected.parentNode?.removeChild(userConnected);
+
+      const user = document.querySelector(
+        `#connected-user-${newState.voiceChannel}`,
+      )!;
+      if (!user.querySelector(`#user-${authStore.getState().userData!.id}`)) {
+        const userChild = connectedUser(
+          authStore.getState().userData as Record<string, any>,
+        );
+        user.append(userChild);
+      }
+    }
   });
 }

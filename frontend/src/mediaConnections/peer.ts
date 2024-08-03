@@ -1,6 +1,7 @@
 import Peer, { MediaConnection } from "peerjs";
-import { socket } from "../constants/otherConnections/other";
 import { UUID } from "../types";
+import { socket } from "../sockets";
+import { getUserMedia } from "../utils/getUserMedia";
 
 export class PeerService {
   private myPeer: Peer | null = null;
@@ -34,14 +35,14 @@ export class PeerService {
 
   async setupAudioStream(): Promise<void> {
     try {
-      this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.stream = (await getUserMedia()) || null;
       this.addAudioStream(this.stream, "me");
     } catch (error) {
       console.error("Failed to get local stream", error);
     }
   }
 
-  establishPeerConnections(users: any[]): void {
+  public establishPeerConnections(users: any[]): void {
     users.forEach((user) => {
       if (
         user.userId !== this.myPeer?.id &&
@@ -54,6 +55,12 @@ export class PeerService {
         }
       }
     });
+  }
+
+  public endPeerConnection(userId: UUID) {
+    if (this.connections[userId]) {
+      this.connections[userId].close();
+    }
   }
 
   private handleIncomingCall(call: MediaConnection): void {
@@ -75,7 +82,8 @@ export class PeerService {
     this.connections[userId] = call;
   }
 
-  private addAudioStream(stream: MediaStream, _: string): void {
+  private addAudioStream(stream: MediaStream | null, _: string): void {
+    if (!stream) return;
     const source = this.audioContext.createMediaStreamSource(stream);
     source.connect(this.audioDestination);
 
@@ -92,7 +100,7 @@ export class PeerService {
     combinedAudio.srcObject = this.audioDestination.stream;
   }
 
-  private removeAudioStream(userId: string): void {
+  public removeAudioStream(userId: string): void {
     console.log(`User ${userId} disconnected`);
     this.audioContext.close();
     // Additional cleanup if needed

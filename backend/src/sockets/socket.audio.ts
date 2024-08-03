@@ -37,6 +37,33 @@ export const audioSocket = (socket: Socket) => {
     }
   });
 
+  socket.on("left-voice-room", async (data) => {
+    try {
+      const userInfo = await UserService.getUserById(data.id);
+      if (!channels[data.channelId]) {
+        return;
+      }
+
+      channels[data.channelId] = new Set(
+        Array.from(channels[data.channelId]).filter((user: any) => {
+          return user.userId !== data.id;
+        }),
+      );
+
+      if (channels[data.channelId].size > 0) {
+        socket.emit("user-disconnected", {
+          users: Array.from(channels[data.channelId]),
+          channelId: data.channelId,
+          userInfo: userInfo,
+        });
+      } else {
+        delete channels[data.channelId];
+      }
+    } catch (error) {
+      console.error("Error handling user disconnection:", error);
+    }
+  });
+
   socket.on("disconnect", () => {
     for (const channelId in channels) {
       channels[channelId] = new Set(
@@ -55,7 +82,7 @@ export const audioSocket = (socket: Socket) => {
         socket.emit("user-disconnected", {
           users: Array.from(channels[channelId]),
           channelId: channelId,
-          userInfo: [userInfo],
+          userInfo: userInfo,
         });
       }
     }

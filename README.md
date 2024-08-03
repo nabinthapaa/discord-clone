@@ -73,6 +73,22 @@ Run the compose.yml file in the root directory using compose using
 
 The frontend will be available at `http://localhost:5173` and the backend at `http://localhost:<PORT>`.
 
+## Setting up `HTTPS` server for User devices access
+
+1. Make certificates folder in both backend and frontend of the project
+2. Change directory to `certificates` and run following commands
+
+```bash
+  # Generate private Key
+  openssl genrsa -out key.pem 2048
+
+  # Generate a certificate signing Request
+  openssl req -new -key key.pem -out csr.pem
+
+  # Self Sign certificate
+  openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out cert.pem
+```
+
 ## API Endpoints
 
 ### Auth Routes

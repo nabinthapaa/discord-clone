@@ -31,6 +31,8 @@ export async function mainViewUi(parent: HTMLDivElement) {
   setupChannelBar(channelBarComponent);
   if (servers && servers.data.length) {
     serverStateStore.getState().changeActiveServer(servers.data[0].serverId);
+    document.querySelector(`#server-name`)!.textContent =
+      servers.data[0].serverName;
   }
   setupMessage(messageBoxComponent);
 }

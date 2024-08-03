@@ -1,17 +1,14 @@
-import { socket } from "../constants/otherConnections/other";
+import { io } from "socket.io-client";
+import { BACKEND_URL } from "../constants/backendRoutes/routes";
+import { serverStateStore } from "../store/serverStateStore";
+
+export const socket = io(BACKEND_URL, {
+  withCredentials: true,
+});
 
 socket.on("connect", () => {
-  console.log("connected");
-  console.log("Sending hello");
-  socket.emit("hello");
-});
-
-socket.on("hello", (data) => {
-  console.log("Recieved hello response");
-  console.log(data);
-});
-
-socket.on("error", (data) => {
-  console.error("Socket Error");
-  console.log(data);
+  const chanelId = serverStateStore.getState().activeChannelId;
+  if (chanelId) {
+    socket.emit("joinChannel", { id: chanelId });
+  }
 });

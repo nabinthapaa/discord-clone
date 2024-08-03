@@ -1,6 +1,6 @@
-import { socket } from "../../constants/otherConnections/other";
 import { Toast } from "../../enums/toast";
 import { getChannelMessage } from "../../services/message.service";
+import { socket } from "../../sockets";
 import { authStore } from "../../store/authStore";
 import { serverStateStore } from "../../store/serverStateStore";
 import { UUID } from "../../types";

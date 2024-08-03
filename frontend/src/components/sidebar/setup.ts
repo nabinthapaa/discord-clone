@@ -69,6 +69,7 @@ export async function setupSidebar(
 
       serverIcon.onclick = async () => {
         serverStateStore.getState().changeActiveServer(server.serverId);
+        document.querySelector(`#server-name`)!.textContent = server.serverName;
       };
     });
 
