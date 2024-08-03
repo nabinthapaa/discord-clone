@@ -12,6 +12,7 @@ export function requestLogger(
   res: Response,
   next: NextFunction,
 ): void {
+  logger.info(`${req.hostname}: ${req.originalUrl}`);
   logger.info(`${req.method}: ${req.url}`);
   next();
 }

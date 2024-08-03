@@ -9,6 +9,7 @@ import {
 } from "../middlewares";
 import { ServerSchema } from "../Schemas";
 import { requestWrapper, upload } from "../utils";
+import cookieParser from "cookie-parser";
 
 const router = express.Router();
 
@@ -89,6 +90,13 @@ router.delete(
   authenticate,
   validateRequestParams(ServerSchema.serverOperationWithoutUserSchema),
   requestWrapper(ServerController.removeUserFromServer),
+);
+
+router.post(
+  "/invite/:code",
+  cookieChecker,
+  authenticate,
+  requestWrapper(ServerController.addFromInvitation),
 );
 
 export default router;

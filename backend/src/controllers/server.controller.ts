@@ -1,13 +1,14 @@
 import { Response } from "express";
 import { BadRequestError } from "../errors";
 import {
+  IInvitation,
   INewServer,
   ISeverParams,
   ISeverParamsWithOutUser,
   ISeverParamsWithUserOnly,
   Request,
 } from "../interfaces";
-import { ServerService } from "../services";
+import { ChannelService, ServerService } from "../services";
 import { httpStatusCode } from "../utils";
 
 export async function createServer(
@@ -60,9 +61,12 @@ export async function getServerById(
   req: Request<ISeverParamsWithOutUser>,
   res: Response,
 ) {
+  const { id: userId } = req.user!;
   const { id } = req.params;
 
   const server = await ServerService.getServerById(id);
+  const serverRole = await ChannelService.getUserPermssion(id, userId);
+  console.log(serverRole);
 
   return res.status(httpStatusCode.OK).json({
     data: server,
@@ -103,4 +107,16 @@ export async function deleteServer(req: Request<ISeverParams>, res: Response) {
   await ServerService.deleteServer(id, userId);
 
   res.status(httpStatusCode.OK).json({ message: "server delete successfully" });
+}
+
+export async function addFromInvitation(
+  req: Request<IInvitation>,
+  res: Response,
+) {
+  const { code } = req.params;
+  const { id } = req.user!;
+
+  await ServerService.addUserFromInvitaionCode(code, id);
+
+  res.status(httpStatusCode.OK).json({ message: "Join successfully" });
 }

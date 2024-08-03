@@ -1,5 +1,7 @@
+import { Server } from "socket.io";
 import { EChanneType, EServerRole } from "../enums";
 import { NotFoundError } from "../errors";
+import { InvalidError } from "../errors/InvalidError";
 import {
   IServer,
   IServerMember,
@@ -38,6 +40,8 @@ export class ServerModel extends BaseModel {
           channelType: EChanneType.VOICE,
         },
       ]);
+
+      await trx("invitations").insert({ serverId: newServer.id });
     });
   }
 
@@ -73,7 +77,7 @@ export class ServerModel extends BaseModel {
       .where("sm.userId", "=", userId)
       .select<
         IUserSever[]
-      >("u.userName as ownerName", "u2.userName as memberName", "s.id as serverId", "serverName", "serverPicture")
+      >("u.userName as ownerName", "u2.userName as memberName", "s.id as serverId", "serverName", "serverPicture", "serverRole")
       .join("servers as s", "s.id", "sm.serverId")
       .join("users as u", "u.id", "s.userId")
       .join("users as u2", "u2.id", "sm.userId");
@@ -107,5 +111,18 @@ export class ServerModel extends BaseModel {
       .select<
         IServerMember[]
       >("userName as memberName", "serverRole", "serverName", "u.id as memberId", "sm.createdAt as joinedOn");
+  }
+
+  static async addFromInvitation(code: UUID, userId: UUID) {
+    return ServerModel.queryBuilder().transaction(async (trx) => {
+      const serverId = await trx("invitaions")
+        .where({ serverId: code })
+        .returning(["serverId"])
+        .first();
+      if (!serverId) {
+        throw new InvalidError(`Invalid invitation code`);
+      }
+      return await trx("serverMembers").insert({ serverId, userId });
+    });
   }
 }

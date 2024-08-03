@@ -36,6 +36,7 @@ export interface IUserSever {
   serverId: UUID;
   serverName: string;
   serverPicture: string | null;
+  serverRole: EServerRole;
 }
 
 export interface IServerRetrieved {
@@ -44,4 +45,8 @@ export interface IServerRetrieved {
   serverId: UUID;
   serverName: string;
   serverPicture: string | null;
+}
+
+export interface IInvitation {
+  code: UUID;
 }

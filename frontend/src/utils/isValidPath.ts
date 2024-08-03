@@ -3,7 +3,7 @@ export const paths = [
   "/register",
   "/login",
   "/@me",
-  "/@me/:channelId",
+  "/server/:serverId",
   "/server/:serverId/:channelId",
   "/not-found",
 ];

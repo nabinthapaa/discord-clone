@@ -4,6 +4,7 @@ import { httpStatusCode, requestWrapper } from "../utils";
 import authRouter from "./auth.routes";
 import channelRouter from "./channel.routes";
 import serverRouter from "./server.routes";
+import messageRouter from "./message.routes";
 
 const router = express();
 
@@ -19,5 +20,6 @@ router.get(
 router.use("/", authRouter);
 router.use("/servers", serverRouter);
 router.use("/channels", channelRouter);
+router.use("/messages", messageRouter);
 
 export default router;

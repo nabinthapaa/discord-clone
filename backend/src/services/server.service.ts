@@ -4,7 +4,6 @@ import { ServerModel } from "../models";
 import { UUID } from "../types";
 import { getImage, saveImage } from "../utils";
 
-// TODO: Get lower res picture for server profiles
 export async function createServer(
   name: string,
   image: string | undefined,
@@ -50,6 +49,13 @@ export function addUserToServer(id: UUID, userId: UUID) {
   if (!user) throw new Error(`User specified is not found`);
 
   return ServerModel.addUserToServer(id, userId);
+}
+
+export function addUserFromInvitaionCode(code: UUID, userId: UUID) {
+  const user = UserService.getUserById(userId);
+  if (!user) throw new Error(`User specified is not found`);
+
+  return ServerModel.addFromInvitation(code, userId);
 }
 
 export function removeUserFromServer(id: UUID, userId: UUID) {

@@ -5,7 +5,7 @@ export const getCookieOptions = (
 ): CookieOptions => {
   return {
     httpOnly: true,
-    sameSite: "strict",
+    sameSite: "none",
     ...additionalOptions,
   };
 };

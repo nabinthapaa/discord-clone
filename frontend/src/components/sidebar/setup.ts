@@ -1,10 +1,9 @@
 import { IServerData } from "../../interfaces/server.interface";
-import { socket } from "../../main";
-import { formDataSchema } from "../../schemas/server.schema";
-import { createSever, getServerInfo } from "../../services/server.service";
-import { UUID } from "../../types";
+import { createServerSchema } from "../../schemas/server.schema";
+import { createServer } from "../../services/server.service";
+import { serverStateStore } from "../../store/serverStateStore";
+import { addFormError } from "../../utils/addFormErrors";
 import { validate } from "../../utils/validator";
-import { channelNamse } from "../channelBar/channelbar.component";
 import { sidebarIcons } from "./sidebarIcons.component";
 
 export async function setupSidebar(
@@ -12,18 +11,49 @@ export async function setupSidebar(
   servers: IServerData[] | undefined,
 ) {
   const serverContainer =
-    sidebar.querySelector<HTMLDivElement>("#server-container");
+    sidebar.querySelector<HTMLDivElement>("#server-container")!;
   const createNewSever =
-    sidebar.querySelector<HTMLDivElement>("#create-new-server");
-  const dmContainer = sidebar.querySelector<HTMLDivElement>("#dm-container");
+    sidebar.querySelector<HTMLDivElement>("#create-new-server")!;
   const modal = document.querySelector<HTMLDivElement>("#create-server-modal");
 
-  let isModalOpen = false;
+  const submitCreateServer = async (e: SubmitEvent) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const formdata = new FormData(form);
+
+    const { success, errors } = validate(createServerSchema, formdata);
+    if (!success) {
+      addFormError(form, errors);
+    }
+    if (success) {
+      modal!
+        .querySelector<HTMLButtonElement>("#create-server-button")
+        ?.setAttribute("disabled", "true");
+      await createServer(formdata);
+      closeModal();
+    }
+  };
 
   const closeModal = () => {
-    isModalOpen = false;
     modal?.classList.add("scale-0");
     modal?.classList.remove("animate-pop-up");
+    modal!
+      .querySelector<HTMLButtonElement>("#close-modal")!
+      .removeEventListener("click", closeModal);
+    modal!
+      .querySelector<HTMLFormElement>("#create-server-form")
+      ?.removeEventListener("submit", submitCreateServer);
+  };
+
+  const openModal = () => {
+    modal?.classList.toggle("scale-0");
+    modal?.classList.toggle("animate-pop-up");
+    modal!
+      .querySelector<HTMLButtonElement>("#close-modal")!
+      .addEventListener("click", closeModal);
+    modal!
+      .querySelector<HTMLFormElement>("#create-server-form")
+      ?.addEventListener("submit", submitCreateServer);
   };
 
   if (servers)
@@ -32,43 +62,28 @@ export async function setupSidebar(
       serverIcon.querySelector("#serverName")!.textContent = server.serverName;
       serverContainer?.appendChild(serverIcon);
       serverIcon.dataset.id = server.serverId;
-      serverIcon.onclick = async () => {
-        fetchServerChannels(server.serverId);
-      };
+
       serverIcon.onmouseover = (e) => {
         attachTooltipToMouse(serverIcon, e);
+      };
+
+      serverIcon.onclick = async () => {
+        serverStateStore.getState().changeActiveServer(server.serverId);
+        document.querySelector(`#server-name`)!.textContent = server.serverName;
       };
     });
 
   createNewSever?.addEventListener("click", (e) => {
     e.preventDefault();
-    modal?.classList.toggle("scale-0");
-    modal?.classList.toggle("animate-pop-up");
-    isModalOpen = !isModalOpen;
+    console.log(modal);
+    openModal();
   });
 
-  dmContainer?.addEventListener("click", (e) => {
-    e.preventDefault();
-    closeModal();
+  document.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
   });
-
-  modal!.querySelector("#close-modal")?.addEventListener("click", closeModal);
-  modal!
-    .querySelector<HTMLFormElement>("#create-server-form")
-    ?.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const form = e.target as HTMLFormElement;
-      const formdata = new FormData(form);
-
-      const { errors, success } = validate(formDataSchema, formdata);
-      if (success) {
-        modal!
-          .querySelector<HTMLButtonElement>("#create-server-button")
-          ?.setAttribute("disable", "true");
-        await createSever(formdata);
-        closeModal();
-      }
-    });
 }
 
 function attachTooltipToMouse(serverIcon: HTMLDivElement, e: MouseEvent) {
@@ -85,33 +100,4 @@ function attachTooltipToMouse(serverIcon: HTMLDivElement, e: MouseEvent) {
     tooltip.style.left = `${tooltipX}px`;
     tooltip.style.top = `${tooltipY}px`;
   }
-}
-
-async function fetchServerChannels(serverId: UUID) {
-  const serverChannel = await getServerInfo(serverId);
-  const channelBarContainer = document.querySelector("#channel-bar")!;
-  const voiceChannelGroup =
-    channelBarContainer.querySelector("#voice-channel")!;
-  const textChannelGroup = channelBarContainer.querySelector("#text-channel")!;
-  voiceChannelGroup.innerHTML = "";
-  textChannelGroup.innerHTML = "";
-
-  serverChannel?.data.forEach((channel) => {
-    const channelBar = channelNamse(channel as Record<string, any>);
-    const channelExists = channelBarContainer.querySelector(
-      `[data-id='${channel.id}']`,
-    );
-    if (!channelExists) {
-      if (channel.channelType === "text") {
-        textChannelGroup.appendChild(channelBar);
-        channelBar.onclick = () => {
-          socket.emit("joinChannel", {
-            id: channel.id,
-          });
-        };
-      }
-      if (channel.channelType === "voice")
-        voiceChannelGroup.appendChild(channelBar);
-    }
-  });
 }

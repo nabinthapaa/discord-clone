@@ -19,6 +19,7 @@ export function validateRequestParams(QueryFormat: Joi.ObjectSchema) {
     _: Response,
     next: NextFunction,
   ) => {
+    console.log(req.params);
     const { error, value } = QueryFormat.validate(req.params);
     if (error) {
       return next(new BadRequestError(error.message));

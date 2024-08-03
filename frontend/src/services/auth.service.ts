@@ -3,7 +3,7 @@ import { HttpMethod } from "../enums/method";
 import { Toast } from "../enums/toast";
 import { requestToServer } from "../utils/requestHandler";
 import { showToast } from "../utils/showToast";
-import { LOGIN_URL, REGISTER_URL } from "../constants/requestUrls/auth";
+import { LOGIN_URL, REGISTER_URL } from "../constants/backendRoutes/routes";
 
 export async function login(data: ILogin) {
   return await requestToServer<IloginData>(

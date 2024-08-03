@@ -1,16 +1,17 @@
+import { IRegister } from "../interfaces/auth.interface";
 import { registerSchema } from "../schemas/auth.schema";
-import { HttpMethod } from "../enums/method";
-import { Toast } from "../enums/toast";
+import { register } from "../services/auth.service";
+import { addFormError } from "../utils/addFormErrors";
 import { getComponent } from "../utils/getComponent";
-import { requestToServer } from "../utils/requestHandler";
 import { Router } from "../utils/router";
-import { showToast } from "../utils/showToast";
 import { validate } from "../utils/validator";
 import { loginForm } from "./login.view";
-import { register } from "../services/auth.service";
-import { IRegister } from "../interfaces/auth.interface";
 
-async function handleFormSubmit(data: FormData, formParent: HTMLDivElement) {
+async function handleFormSubmit(
+  data: FormData,
+  formParent: HTMLDivElement,
+  form: HTMLFormElement,
+) {
   const dataObject = Object.fromEntries(data.entries());
   const formDataObject = {
     ...dataObject,
@@ -19,9 +20,7 @@ async function handleFormSubmit(data: FormData, formParent: HTMLDivElement) {
 
   const { success, errors } = validate(registerSchema, formDataObject);
   if (!success && errors) {
-    errors.forEach((err) => {
-      document.querySelector(`#${err.error}-error`)!.textContent = err.message;
-    });
+    addFormError(form, errors);
   } else if (success) {
     const data = await register(formDataObject as IRegister);
     if (data) {
@@ -38,7 +37,7 @@ export async function registerForm(app: HTMLDivElement) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(form);
-    await handleFormSubmit(formData, app);
+    await handleFormSubmit(formData, app, form);
   });
 
   form.querySelectorAll("input").forEach((i) =>

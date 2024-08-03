@@ -18,4 +18,8 @@ export const mainViewHtml: IFetchHtml[] = [
     folder: "modals",
     filename: "createServerModal",
   },
+  {
+    folder: "modals",
+    filename: "createChannelModal",
+  },
 ];

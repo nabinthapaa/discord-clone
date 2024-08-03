@@ -1,3 +1,4 @@
+import { ForbiddenError } from "../errors";
 import {
   IChannelMessage,
   IChannelMessageDB,
@@ -26,6 +27,13 @@ export class MessageModel extends BaseModel {
       .andWhere(function () {
         this.where("dm.sender_id", user2Id).orWhere("dm.reciever_id", user2Id);
       });
+  }
+
+  static getMessageById(id: UUID) {
+    return MessageModel.queryBuilder()
+      .table("serverMessages")
+      .where({ id })
+      .first();
   }
 
   static createDirectMessages({
@@ -76,22 +84,29 @@ export class MessageModel extends BaseModel {
     message: string;
   }): Promise<IChannelMessage> {
     return MessageModel.queryBuilder().transaction(async (trx) => {
+      const { channelType } = await trx("serverChannels")
+        .where({ id: channelId })
+        .first();
+      if (channelType === "voice") {
+        throw new ForbiddenError(`Cannot write message to this channel`);
+      }
       const [newMessage] = await trx("server_messages")
         .insert({
           channelId,
           serverId,
           content: message,
+          senderId: userId,
         })
         .returning<IChannelMessageDB[]>([
           "id as messageId",
           "content as message",
-          "created_at as sendOn",
-          "is_pinned as isPinned",
+          "createdAt as sentOn",
+          "isPinned as isPinned",
         ]);
 
       const [senderName] = await trx("users")
         .where({ id: userId })
-        .returning(["display_name"]);
+        .returning(["displayName", "userName"]);
       const [serverName] = await trx("servers")
         .where({ id: serverId })
         .returning(["name"]);
@@ -102,27 +117,52 @@ export class MessageModel extends BaseModel {
       return {
         ...newMessage,
         senderName: senderName.display_name,
+        userName: senderName.userName,
         serverName: serverName.name,
         channelName: channelName.name,
+        serverId,
       };
     });
   }
 
-  static async getChannelMessages(channelId: UUID, serverId: UUID) {
+  static async getChannelMessages(channelId: UUID) {
     return await MessageModel.queryBuilder()
       .table("server_messages as sm")
       .select<IChannelMessage[]>(
-        "sm.id as message_id",
+        "sm.id as messageId",
         "sm.content as message",
-        "sm.created_at as send_on",
-        "sc.name as channelName",
-        "u.name as sender_name",
+        "sm.created_at as sentOn",
+        "sc.channelName as channelName",
+        "u.displayName as senderName",
+        "u.userName as userName",
       )
-      .where("sm.server_id", "=", serverId)
-      .andWhere("sm.channel_id", "=", channelId)
-      .join("server_channels as sc", "sm.channel_id", "sc.id")
-      .join("users as u", "sm.sender_id", "u.id")
-      .orderBy([{ column: "sm.created_at", order: "desc" }])
+      .andWhere("sm.channelId", "=", channelId)
+      .join("serverChannels as sc", "sm.channelId", "sc.id")
+      .join("users as u", "sm.senderId", "u.id")
+      .orderBy([{ column: "sm.createdAt", order: "desc" }])
       .limit(20);
+  }
+
+  static async updateChannelMessage(
+    id: UUID,
+    message: string,
+    userId: UUID,
+  ): Promise<{ content: string }> {
+    return await MessageModel.queryBuilder().transaction(async (trx) => {
+      await trx("serverMessages")
+        .where({ id, senderId: userId })
+        .update("content", message);
+
+      return await trx("serverMessages")
+        .select("content")
+        .where({ id })
+        .first();
+    });
+  }
+
+  static async deleteChannelMessage(id: UUID) {
+    return await MessageModel.queryBuilder().transaction(async (trx) => {
+      await trx("serverMessages").where({ id }).del();
+    });
   }
 }

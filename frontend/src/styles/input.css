@@ -58,3 +58,13 @@
 .animate-toast {
   animation: slide-in 2s ease-in-out forwards;
 }
+
+.hidden-content {
+  max-height: 0;
+  clip-path: inset(0 0 100% 0);
+}
+
+.hidden-content.open {
+  max-height: fit-content;
+  clip-path: inset(0 0 0 0);
+}

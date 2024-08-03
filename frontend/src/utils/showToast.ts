@@ -8,12 +8,12 @@ export async function showToast(message: string, toast: Toast) {
   const div = document.createElement("div");
   div.classList.add("absolute");
   div.innerHTML = toastData;
-  console.log(div.innerHTML);
   div.querySelector("#message")!.textContent = message;
   document.body.prepend(div);
 
   setTimeout(() => {
     div.style.display = "none";
+    document.body.removeChild(div);
   }, 2000);
 }
 
