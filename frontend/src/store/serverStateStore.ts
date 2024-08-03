@@ -6,8 +6,9 @@ interface IServerStateStore {
   activeChannelId: UUID | null;
   messageContainer: HTMLDivElement | null;
   channelContainer: HTMLDivElement | null;
+  channelName: string | null;
   changeActiveServer(id: UUID): void;
-  updateChannels(id: UUID): void;
+  updateChannels(id: UUID, channelName: string): void;
   updateMessageContainer(messageContainer: HTMLDivElement): void;
 }
 
@@ -16,6 +17,7 @@ export const serverStateStore = createStore<IServerStateStore>((set) => ({
   messageContainer: null,
   channelContainer: null,
   activeChannelId: null,
+  channelName: null,
   changeActiveServer: (id: UUID) =>
     set((state) => {
       return {
@@ -23,11 +25,12 @@ export const serverStateStore = createStore<IServerStateStore>((set) => ({
         activeServerId: id,
       };
     }),
-  updateChannels: (id: UUID) =>
+  updateChannels: (id, channelName) =>
     set((state) => {
       return {
         ...state,
         activeChannelId: id,
+        channelName: channelName,
       };
     }),
   updateMessageContainer: (messageContainer) =>

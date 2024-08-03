@@ -1,6 +1,6 @@
 import { UUID } from "../../types";
 
-export const BACKEND_URL = "http://localhost:8000";
+export const BACKEND_URL = "http://192.168.1.129:8000";
 
 // Auth routes
 export const AUTH_BASE_URL = `${BACKEND_URL}/`;

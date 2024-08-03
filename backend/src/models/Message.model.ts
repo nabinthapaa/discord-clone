@@ -1,3 +1,4 @@
+import { ForbiddenError } from "../errors";
 import {
   IChannelMessage,
   IChannelMessageDB,
@@ -76,6 +77,12 @@ export class MessageModel extends BaseModel {
     message: string;
   }): Promise<IChannelMessage> {
     return MessageModel.queryBuilder().transaction(async (trx) => {
+      const { channelType } = await trx("serverChannels")
+        .where({ id: channelId })
+        .first();
+      if (channelType === "voice") {
+        throw new ForbiddenError(`Cannot write message to this channel`);
+      }
       const [newMessage] = await trx("server_messages")
         .insert({
           channelId,

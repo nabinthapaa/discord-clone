@@ -13,6 +13,7 @@ export async function showToast(message: string, toast: Toast) {
 
   setTimeout(() => {
     div.style.display = "none";
+    document.body.removeChild(div);
   }, 2000);
 }
 

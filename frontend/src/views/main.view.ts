@@ -29,7 +29,7 @@ export async function mainViewUi(parent: HTMLDivElement) {
 
   setupSidebar(sidebarComponent, servers?.data);
   setupChannelBar(channelBarComponent);
-  if (servers && servers.data) {
+  if (servers && servers.data.length) {
     serverStateStore.getState().changeActiveServer(servers.data[0].serverId);
   }
   setupMessage(messageBoxComponent);

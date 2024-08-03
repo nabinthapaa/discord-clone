@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import cookie from "cookie";
 import { MessageService } from "../services";
+import { validateMessage } from "./middlewares/validateMessage";
 
 export const messageSocket = (socket: Socket) => {
   // Track the current room of the user
@@ -10,6 +11,8 @@ export const messageSocket = (socket: Socket) => {
     if (currentRoom) {
       const cookies = cookie.parse(socket.handshake.headers.cookie || "");
       try {
+        validateMessage(data);
+
         const writtenMessage = await MessageService.createChannelMessage(
           data.channelId,
           data.message,
@@ -24,9 +27,11 @@ export const messageSocket = (socket: Socket) => {
           ...writtenMessage,
         });
       } catch (e) {
-        socket.emit("message-error", {
-          error: "Error setting up message",
-        });
+        if (e instanceof Error) {
+          socket.emit("message-error", {
+            error: e.message || "Error setting up message",
+          });
+        }
       }
     } else {
       console.log("User is not in any room.");

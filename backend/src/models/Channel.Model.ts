@@ -34,6 +34,7 @@ export class ChannelModel extends BaseModel {
         "channelName",
         "channelPermission",
         "channelType",
+        "s.serverName as serverName",
       )
       .join("servers as s", "s.id", "sc.serverId");
   }
